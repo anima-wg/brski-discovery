@@ -842,27 +842,27 @@ Eckert                    Expires 1 March 2024                 [Page 15]
 Internet-Draft               BRSKI-discovery                 August 2023
 
 
-   +=========+=================+======================================+
-   | Context | Applicable      | Service Name(s)                      |
-   |         | Variation Types |                                      |
-   +=========+=================+======================================+
-   | BRSKI   | mode vformat    | GRASP objectives "AN_join_registrar" |
-   |         | enroll          | / "AN_Proxy" with IPPROTO_TCP        |
-   +---------+-----------------+--------------------------------------+
-   |         |                 | "brski-registrar" / "brski-proxy" in |
-   |         |                 | DNS-SD with TCP                      |
-   +---------+-----------------+--------------------------------------+
-   | cBRSKI  | mode vformat    | GRASP objectives "AN_join_registrar" |
-   |         | enroll          | / "AN_join_registrar_rjp" /          |
-   |         |                 | "AN_Proxy" with IPPROTO_UDP          |
-   +---------+-----------------+--------------------------------------+
-   |         |                 | "brski-registrar" / "brski-proxy" in |
-   |         |                 | DNS-SD with UDP                      |
-   +---------+-----------------+--------------------------------------+
-   |         |                 | rt=brski.* with CORE-LF(RFC6690)     |
-   +---------+-----------------+--------------------------------------+
+          +=========+============+=============================+
+          | Context | Applicable | Service Name(s)             |
+          |         | Variation  |                             |
+          |         | Types      |                             |
+          +=========+============+=============================+
+          | BRSKI   | mode       | GRASP: "AN_join_registrar"  |
+          |         | vformat    | / "AN_Proxy" with           |
+          |         | enroll     | IPPROTO_TCP                 |
+          |         |            | DNS-SD: "brski-registrar" / |
+          |         |            | "brski-proxy" with TCP      |
+          +---------+------------+-----------------------------+
+          | cBRSKI  | mode       | GRASP: "AN_join_registrar"  |
+          |         | vformat    | / "AN_join_registrar_rjp" / |
+          |         | enroll     | "AN_Proxy" with IPPROTO_UDP |
+          |         |            | DNS-SD: "brski-registrar" / |
+          |         |            | "brski-proxy" SD with UDP   |
+          |         |            | CORE-LF: rt=brski.*         |
+          +---------+------------+-----------------------------+
 
                     Table 1: BRSKI Variation Contexts
+
 
 
 

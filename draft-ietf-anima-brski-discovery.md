@@ -517,11 +517,8 @@ Spec / Applicability:
 
 | Context         | Applicable Variation Types | Service Name(s)|
 |:----------------|:---------------------------|:--------------|
-| BRSKI           | mode vformat enroll        | GRASP objectives "AN_join_registrar" / "AN_Proxy" with IPPROTO_TCP |
-|                 |                            |  "brski-registrar" / "brski-proxy" in DNS-SD with TCP              |
-| cBRSKI          | mode vformat enroll        | GRASP objectives "AN_join_registrar" / "AN_join_registrar_rjp" / "AN_Proxy" with IPPROTO_UDP |
-|                 |                            | "brski-registrar" / "brski-proxy" in DNS-SD with UDP |
-|                 |                            | rt=brski.* with CORE-LF(RFC6690) |
+| BRSKI           | mode<br>vformat<br>enroll  | GRASP:  "AN_join_registrar" / "AN_Proxy" with IPPROTO_TCP<br>DNS-SD: "brski-registrar" / "brski-proxy" with TCP|
+| cBRSKI          | mode<br>vformat<br>enroll  | GRASP: "AN_join_registrar" / "AN_join_registrar_rjp" / "AN_Proxy" with IPPROTO_UDP<br> DNS-SD: "brski-registrar" / "brski-proxy" SD with UDP <br> CORE-LF: rt=brski.*|
 {: #fig-contexts title="BRSKI Variation Contexts"}
 
 | Context         | Variation<br>Type | Variation <br>Type Choice | Reference | Flags | Note(s)                                                |
