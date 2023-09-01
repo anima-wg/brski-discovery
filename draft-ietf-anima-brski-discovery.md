@@ -36,32 +36,24 @@ contributor:
   email: mcr+ietf@sandelman.org
 
 normative:
-  CORE-LF:   RFC6690
-  DNS-SD:    RFC6763
-  GRASP:     RFC8990
-  ACP:       RFC8994
-  BRSKI:     RFC8995
+  RFC6690:
+  RFC6763:
+  RFC8990:
+  RFC8994:
   RFC8995:
-  BRSKI-AE:  I-D.ietf-anima-brski-ae
   I-D.ietf-anima-brski-ae:
-  BRSKI-PRM: I-D.ietf-anima-brski-prm
   I-D.ietf-anima-brski-prm:
-  cBRSKI:    I-D.ietf-anima-constrained-voucher
   I-D.ietf-anima-constrained-voucher:
-  cPROXY:    I-D.ietf-anima-constrained-join-proxy
-  JWS-VOUCHER: I-D.ietf-anima-jws-voucher
+  I-D.ietf-anima-constrained-join-proxy:
   I-D.ietf-anima-jws-voucher:
-  EST:       RFC7030
   RFC7030:
   RFC8368:
-  CMP:       I-D.ietf-lamps-lightweight-cmp-profile
   I-D.ietf-lamps-lightweight-cmp-profile:
 
 informative:
-  COAP:      RFC7252
-  SCEP:      RFC8894
+  RFC7252:
   RFC8894:
-  GRASP-DNSSD: I-D.eckert-anima-grasp-dnssd
+  I-D.eckert-anima-grasp-dnssd:
 
 --- abstract
 
@@ -125,6 +117,52 @@ Variation Type:
 Variation Type Choice: 
 : The name for different values that a particular variation type may have.
   For example, this document does defines the choices "rrm" and "prm" for the BRSKI variation "mode". 
+
+{: #ACP}ACP:
+: "An Autonomic Control Plane", {{RFC8994}}. 
+
+{: #BRSKI}BRSKI:
+: "Bootstrapping Remote Secure Key Infrastructure", {{RFC8995}}
+
+{: #BRSKI-AE}BRSKI-AE:
+: "Alternative Enrollment Protocols in {{BRSKI}}", {{I-D.ietf-anima-brski-ae}}
+
+{: #BRSKI-PRM}BRSKI-PRM:
+: "{{BRSKI}} with Pledge in Responder Mode", {{I-D.ietf-anima-brski-prm}}
+
+{: #cBRSKI}cBRSKI:
+: "Constrained Bootstrapping Remote Secure Key Infrastructure ({{BRSKI}})", {{I-D.ietf-anima-constrained-voucher}}
+
+{: #COAP}COAP:
+: "The Constrained Application Protocol (CoAP)", {{RFC7252}}
+
+{: #CORE-LF}CORE-LF:
+: "Constrained RESTful Environments (CoRE) Link Format", {{RFC6690}}.
+
+{: #cPROXY}cPROXY:
+: "Constrained Join Proxy for Bootstrapping Protocols", {{I-D.ietf-anima-constrained-join-proxy}}
+
+{: #DNS-SD}DNS-SD:
+: "DNS-Based Service Discovery", {{RFC6763}}.
+
+{: #EST}EST:
+: "Enrollment over Secure Transport", {{RFC7030}}
+
+{: #GRASP}GRASP:
+: "GeneRic Autonomic Signaling Protocol", {{RFC8990}}.
+
+{: #GRASP-DNSSD}GRASP-DNSSD:
+: "DNS-SD Compatible Service Discovery in GeneRic Autonomic Signaling Protocol (GRASP)", {{I-D.eckert-anima-grasp-dnssd}}
+
+{: #JWS-VOUCHER}JWS-VOUCHER:
+: "JWS signed Voucher Artifacts for Bootstrapping Protocols", {{I-D.ietf-anima-jws-voucher}}
+
+{: #lwCMP}lwCMP:
+: "Lightweight Certificate Management Protocol (CMP) Profile", {{I-D.ietf-lamps-lightweight-cmp-profile}}
+
+{: #SCEP}SCEP:
+: "Simple Certificate Enrolment Protocol", {{RFC8894}}
+
 
 # Overview 
 
@@ -229,7 +267,7 @@ vformat (voucher format):
 enroll:
 : A variation in the URI endpoints used for enrollment of the pledge with keying material (trust anchors and certificate (chain)).
   This document introduces the choices "est" as introduced by {{BRSKI}} (to indicate the {{EST}} protocol)
-  and "cmp" to indicate the lightweigt CMP profile ({{CMP}}) introduced by {{BRSKI-AE}}. It also reserved the choice
+  and "cmp" to indicate the lightweight CMP profile ({{lwCMP}}) introduced by {{BRSKI-AE}}. It also reserved the choice
   "scep" to indicate {{SCEP}}. This is only a reservation, because no specification for the use of {{SCEP}} with BRSKI exist.
 
 ## Variations
@@ -574,7 +612,7 @@ The following change requests to "https://www.iana.org/assignments/brski-paramet
 
 1. IANA is asked to change the name of the first column of the table from "URI" to "URI Suffix". This is in alignment with other table columns with the same syntax/semantic, such as "https://www.iana.org/assignments/well-known-uris/well-known-uris.xhtml".
 
-2. IANA is asked to change the Reference from {{BRSKI}} to {{BRSKI, Section 8.3.1}}.
+2. IANA is asked to change the Reference from {{RFC8995}} to {{RFC8995, Section 8.3.1}}.
 
 3. IANA is asked to include the following "Note" text: The following table contains the assigned BRSKI protocol Endpoint URI suffixes under "/.well-known/brski"." - This note is added to introduce the term "Endpoint" into the registry table as that is the term commonly used (instead of URI) in several of the memos for which this discovery document was written. It is meant to help readers map the registry to the terminoloy used in those documents.
 
