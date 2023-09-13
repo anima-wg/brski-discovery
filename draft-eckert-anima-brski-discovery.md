@@ -3,7 +3,7 @@ coding: utf-8
 
 title: 'Discovery for BRSKI variations'
 abbrev: BRSKI-discovery
-docname: draft-ietf-anima-brski-discovery-00
+docname: draft-eckert-anima-brski-discovery-00
 stand_alone: true
 ipr: trust200902
 submissionType: IETF
