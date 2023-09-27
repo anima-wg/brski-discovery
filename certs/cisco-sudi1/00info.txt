@@ -1,0 +1,87 @@
+From:
+  https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/16-8/configuration_guide/sys_mgmt/b_168_sys_mgmt_9500_cg/b_168_sys_mgmt_9500_cg_chapter_01.html
+  retrieved 09/27/2023
+--------------
+Subject: serialNumber = PID:C9500-16X SN:FCW2117A56M, O = Cisco, OU = ACT-2 Lite SUDI, CN = C9500-16X
+
+--------------
+openssl -in sudi.pem -text -noout
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 25264045 (0x1817fad)
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: O = Cisco, CN = ACT2 SUDI CA
+        Validity
+            Not Before: Apr 28 10:55:55 2017 GMT
+            Not After : Apr 28 10:55:55 2027 GMT
+        Subject: serialNumber = PID:C9500-16X SN:FCW2117A56M, O = Cisco, OU = ACT-2 Lite SUDI, CN = C9500-16X
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:b1:e9:e6:ac:dc:9b:5b:48:0b:ae:ee:18:dd:46:
+                    a4:6e:56:c5:8e:61:ef:23:02:1d:12:ba:36:1d:93:
+                    de:c2:bb:ff:4b:4d:78:b4:f3:80:b9:74:9f:15:d2:
+                    61:49:10:06:c2:10:78:8e:2e:f5:3f:84:7d:02:aa:
+                    10:7e:ba:72:6e:ad:df:24:46:89:0a:66:a4:91:d3:
+                    f9:54:19:8f:2e:6f:90:74:9c:06:73:b1:86:89:4b:
+                    97:af:af:d1:3d:38:f3:75:f5:53:27:4b:af:12:2f:
+                    e1:a2:59:d3:ad:8b:87:8a:ed:09:4f:7b:ec:5e:2d:
+                    5b:2a:49:75:1c:91:5e:1a:ca:4c:09:26:51:45:ca:
+                    00:c4:86:7c:19:11:6d:f9:8e:5f:dd:08:15:ed:bd:
+                    42:7b:8c:cb:4b:12:6a:4e:a8:84:0d:43:51:ba:87:
+                    86:c1:bf:98:b5:03:ad:7a:9e:77:86:7c:15:a1:4e:
+                    9b:8c:d6:90:5e:3a:bd:a6:07:09:74:cc:a1:87:ec:
+                    d1:b5:a4:51:12:97:ac:e0:1e:c8:65:a1:52:30:67:
+                    94:6c:6b:df:54:4e:91:fb:8d:26:20:cf:93:db:a7:
+                    e7:65:ad:a4:e1:b4:2f:ad:c9:bf:d5:56:de:ff:a1:
+                    72:e2:b9:e2:1c:05:f0:cc:60:82:80:81:df:20:93:
+                    2b:4b
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Key Usage: critical
+                Digital Signature, Non Repudiation, Key Encipherment
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Subject Alternative Name: 
+                othername: 1.3.6.1.4.1.9.21.2.3::<unsupported>
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        3c:4e:ec:ab:38:02:54:9b:f1:69:c4:ab:43:8c:a2:af:b7:b6:
+        25:c7:2c:36:15:74:95:20:1f:4c:39:16:c5:28:13:5d:df:cb:
+        19:fc:eb:bb:1a:88:95:4c:62:b4:fb:fb:fc:13:b1:ec:71:74:
+        32:72:48:60:09:1f:99:8f:77:03:cf:98:47:cb:1f:0f:7f:0f:
+        af:e5:fd:de:85:b1:cd:4c:fc:b7:81:ab:e4:36:6b:a2:fa:a1:
+        97:75:ac:92:61:78:d4:32:08:df:e3:38:26:2e:33:47:4a:f4:
+        9c:83:8c:b7:5a:f6:34:9a:dc:02:fb:52:c3:9c:af:d6:9c:88:
+        14:3f:0a:36:7a:f1:b5:77:c7:c2:f3:03:23:c3:b3:ef:aa:cb:
+        a7:c7:80:1e:0e:a4:ff:2f:38:9b:50:76:76:06:0d:90:2d:3a:
+        e9:f8:26:5c:f7:3f:25:e3:48:9c:bd:5d:6a:16:7e:51:be:da:
+        71:97:83:d3:c2:8a:0f:25:d6:9a:4f:8c:38:35:a6:b6:7a:d2:
+        5b:7e:b1:c1:04:27:3a:99:9a:81:c6:9f:f9:5e:94:e1:f8:b3:
+        e9:89:4d:50:31:6e:00:6e:75:c0:37:d1:7a:5d:78:7a:8e:0f:
+        43:9d:90:6f:09:91:73:d8:71:44:39:8a:7e:11:eb:38:30:5c:
+        49:ea:33:36
+-----BEGIN CERTIFICATE-----
+MIIDeTCCAmGgAwIBAgIEAYF/rTANBgkqhkiG9w0BAQsFADAnMQ4wDAYDVQQKEwVD
+aXNjbzEVMBMGA1UEAxMMQUNUMiBTVURJIENBMB4XDTE3MDQyODEwNTU1NVoXDTI3
+MDQyODEwNTU1NVowZTElMCMGA1UEBRMcUElEOkM5NTAwLTE2WCBTTjpGQ1cyMTE3
+QTU2TTEOMAwGA1UEChMFQ2lzY28xGDAWBgNVBAsTD0FDVC0yIExpdGUgU1VESTES
+MBAGA1UEAxMJQzk1MDAtMTZYMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAsenmrNybW0gLru4Y3UakblbFjmHvIwIdEro2HZPewrv/S014tPOAuXSfFdJh
+SRAGwhB4ji71P4R9AqoQfrpybq3fJEaJCmakkdP5VBmPLm+QdJwGc7GGiUuXr6/R
+PTjzdfVTJ0uvEi/holnTrYuHiu0JT3vsXi1bKkl1HJFeGspMCSZRRcoAxIZ8GRFt
++Y5f3QgV7b1Ce4zLSxJqTqiEDUNRuoeGwb+YtQOtep53hnwVoU6bjNaQXjq9pgcJ
+dMyhh+zRtaRREpes4B7IZaFSMGeUbGvfVE6R+40mIM+T26fnZa2k4bQvrcm/1Vbe
+/6Fy4rniHAXwzGCCgIHfIJMrSwIDAQABo28wbTAOBgNVHQ8BAf8EBAMCBeAwDAYD
+VR0TAQH/BAIwADBNBgNVHREERjBEoEIGCSsGAQQBCRUCA6A1EzNDaGlwSUQ9VVlK
+T1NqSk1Cd2dhVFc5dUlFOWpkQ0F4TUNBeE1qbzFORG96T0NENE9hQT0wDQYJKoZI
+hvcNAQELBQADggEBADxO7Ks4AlSb8WnEq0OMoq+3tiXHLDYVdJUgH0w5FsUoE13f
+yxn867saiJVMYrT7+/wTsexxdDJySGAJH5mPdwPPmEfLHw9/D6/l/d6Fsc1M/LeB
+q+Q2a6L6oZd1rJJheNQyCN/jOCYuM0dK9JyDjLda9jSa3AL7UsOcr9aciBQ/CjZ6
+8bV3x8LzAyPDs++qy6fHgB4OpP8vOJtQdnYGDZAtOun4Jlz3PyXjSJy9XWoWflG+
+2nGXg9PCig8l1ppPjDg1prZ60lt+scEEJzqZmoHGn/lelOH4s+mJTVAxbgBudcA3
+0XpdeHqOD0OdkG8JkXPYcUQ5in4R6zgwXEnqMzY=
+-----END CERTIFICATE-----

@@ -1,0 +1,1 @@
+Attempts to collect a few certs for the purpose of comparing the serialNumber and potentially other identifying items for the purpose of deciding on BRSKI discovery protocol details.
