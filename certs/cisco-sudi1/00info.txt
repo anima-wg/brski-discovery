@@ -1,6 +1,8 @@
 From:
   https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/16-8/configuration_guide/sys_mgmt/b_168_sys_mgmt_9500_cg/b_168_sys_mgmt_9500_cg_chapter_01.html
   retrieved 09/27/2023
+  Archived at:
+  https://web.archive.org/web/20220117162051/https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/16-8/configuration_guide/sys_mgmt/b_168_sys_mgmt_9500_cg/b_168_sys_mgmt_9500_cg_chapter_01.html
 --------------
 Subject: serialNumber = PID:C9500-16X SN:FCW2117A56M, O = Cisco, OU = ACT-2 Lite SUDI, CN = C9500-16X
 
