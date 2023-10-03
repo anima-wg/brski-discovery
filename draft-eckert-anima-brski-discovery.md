@@ -3,7 +3,7 @@ coding: utf-8
 
 title: 'Discovery for BRSKI variations'
 abbrev: BRSKI-discovery
-docname: draft-eckert-anima-brski-discovery-00
+docname: draft-eckert-anima-brski-discovery-01
 stand_alone: true
 ipr: trust200902
 submissionType: IETF
@@ -455,11 +455,31 @@ for a registrar Service Name. Registrars therefore SHOULD always include the pro
 to the prior paragraph. This only involves additional code on the registrar beyond the service announcement
 in case the Registrar would otherwise not implement circuit mode.
 
-## Variation encoding rules for discovery mechanisms
+## Variation signaling and encoding rules for different discovery mechanisms
 
 ### DNS-SD
 
-Currently defined Variation Type Choices are encoded as {{DNS-SD}} Keys with a value of 1 in the DNS-SD service instances TXT Record.
+#### Signaling
+
+The following definitions apply to any instantiation of DNS-SD including DNS-SD via mDNS as defined in
+{{DNS-SD}}, but also via unicast DNS, for example by registering the necessary DNS-SD Resource Records (RR)
+via {{I-D.ietf-dnssd-srp}} (SRP). 
+
+The requirements in this document do not guarantee interoperability when using DNS-SD, instead, they need to be amended
+with deployment specific specifications / requirements as to which signaling variation, such as mDNS
+or unicast DNS with SRP is to be supported between initiator and responder. When using unicast DNS
+(with SRP), additional mechanisms are required to learn the IP / IPv6 address(es) of feasible DNS and
+SRP servers, and deployment may also need agreements for the (default) domain they want to use in
+unicast DNS. Hence, a mandatory to implement (MTI) profile is not feasible because of the wide range
+of variations to deploy DNS-SD. 
+
+TBD: We could say that mDNS MUST be supported, unless the network context defines an interoperable
+mode to support DNS-SD without mDNS ???
+
+#### Encoding
+
+Variation Type Choices defined in the IANA registry {{fid-variations}} are encoded as {{DNS-SD}} Keys with
+a value of 1 in the DNS-SD service instances TXT RR.
 This is possible because all Variation Type Choices are required to be unique across all Variation Types. It also allows to shorten
 the encoding from "key=1" to just "key" for every Variation Type Choice, so that the TXT-DATA encoding can be more compact.
 
@@ -470,23 +490,123 @@ protocol is TCP (BRSKI Context), but also when the protocol is UDP (cBRSKI conte
 in both contexts.
 
 If multiple Variation Type Choices for the same Variation Type are indicated, then this implies
-that either of these Variation Type Choices is supported in conjunction with any of the othrer
+that either of these Variation Type Choices is supported in conjunction with any of the other
 Variation Type Choices in the same TXT Record. For example, if the TXT Record is "prm" "rrm" "cms" "jose", then
 this implies support for rrm-cms-est, rrm-jose-est, prm-cms-est and prm-jose-est. This example also shows
 that if the default Variation Type Choice, such as "rrm" and another Choice of the same Variation Type ("prm") are to
 be indicated as supported, then both need to be included in the TXT Record.
 
-In {{DNS-SD}}, a responder does not only indicate a Service Name, but also its Service Instance Name. This specification
-makes no recommendation for choosing the Instance portion of that name. Usually it is the same, or derived from some form
-of system name. If the responder needs to indicate different sockets for differernt (set of) Variations, for example,
+In {{DNS-SD}}, a responder does not only indicate a Service Name, but also its Service Instance Name, which needs
+to be unique across the domain to support initiators selecting a responder. This specification makes no recommendation
+for choosing the Instance portion of that name. Usually it is the same, or derived from some form of pre-existing system name.
+
+Registrars SHOULD support support their configuration without specifying a name to use in the Service Instance Name to minimize the
+amount of configuration required. Registrars SHOULD support the configuration of such a name.
+
+If the responder needs to indicate different sockets for differernt (set of) Variations, for example,
 when operating as a proxy, according to {{proxy}}, then it needs to signal for each socket a separate Service Instance Name
 with the appropriate port information in its SRV Record and the supported Variations for that socket in the TXT Record of that
 Service Instance Name. In this case, it is RECOMMENDED that the Instance Name includes the Variation it supports,
 such as in the format specified in {{variation}} and used in the Variation String column of the {{fig-variations}} table.
 
-TBD: Add an example for DNS-SD.
+~~~~
+               _brski-registrar._tcp.local  PTR  IN          0200:0000:7400._brski-registrar._tcp.local
+0200:0000:7400._brski-registrar._tcp.local  SRV  IN 1 2 4555 0200:0000:7400.local
+0200:0000:7400._brski-registrar._tcp.local  TXT  IN "rrm" "prm"
+0200:0000:7400.local                       AAAA  IN fda3:79a6:f6ee:0000::0200:0000:6400:0001
+
+               _brski-registrar._udp.local  PTR  IN 0200:0000:7400._brski-registrar._udp.local
+0200:0000:7400._brski-registrar._udp.local  SRV  IN 1 2 5684 0200:0000:7400.local
+0200:0000:7400._brski-registrar._udp.local  TXT  IN ""
+~~~~
+{: #dnssd-example-1 title='DNS-SD for a simple BRSKI and cBRSKI registrar'}
+
+In the above example {{dnssd-example-2}, a registrar supports BRSKI with "rrm" and "prm" modes across the same TCP socket, port 4555.
+It uses "cms" voucher format and "est" enrollment, which are not included in the TXT strings because both are default for
+_bski-registrar._tcp. The registrar also offers cBRSKI with "rrm" mode,  "cose" voucher and "est" enrollment on UDP port 5684,
+the COAP over DTLS default port. The TXT RR for this has only an empty string because "rrm", "cose" and
+"est" are default for cBRSKI.
+
+As the instance name, the registrar uses in this example the MAC address "0200:0000:7400", which is
+MAC address of the interface on which the registrar has the IPv6 address "fda3:79a6:f6ee:0000::0200:0000:6400:0001".
+The registrar should know that this MAC address is globally unique (assigned by IEEE). Else it should instead
+use its IPv6 address as the Instance Name. For example, if the registrar is just a software application not
+knowing the specifics of the hardware it is running on, the MAC address MUST NOT be used. If only mDNS is used
+(as in this example), then the IPv6 link-local address would also suffice as the Instance Name.
+
+In this example, a single Instance Name suffices, because BRSKI and cBRSKI are two separate service
+contexts: they are distinguished by different protocols: TCP vs. UDP.
+
+~~~~
+                   _brski-registrar._tcp.local  PTR  IN          0200:0000:7400-rrm._brski-registrar._tcp.local
+0200:0000:7400-rrm._brski-registrar._tcp.local  SRV  IN 1 2 4555 0200:0000:7400-rrm.local
+0200:0000:7400-rrm._brski-registrar._tcp.local  TXT  IN ""
+0200:0000:7400-rrm.local                       AAAA  IN fda3:79a6:f6ee:0000::0200:0000:6400:0001
+
+                   _brski-registrar._tcp.local  PTR  IN          0200:0000:7400-prm._brski-registrar._tcp.local
+0200:0000:7400-prm._brski-registrar._tcp.local  SRV  IN 1 2 4555 0200:0000:7400-prm.local
+0200:0000:7400-prm._brski-registrar._tcp.local  TXT  IN "prm" "cmp"
+0200:0000:7400-prm.local                       AAAA  IN fda3:79a6:f6ee:0000::0200:0000:6400:0001
+~~~~
+{: #dnssd-example-2 title='DNS-SD for a BRSKI registrar supporting RRM and PRM'}
+
+In the second example {{dnssd-example-2}}, a registar needs to use two different Instance Names, because both
+share the same service context: BRSKI - TCP with service name brski-registar. In this example, the registar
+offers "rrm" mode with "cms" voucher and "est" enrollment. It also offers "prm" mode with "cms" voucher,
+but (only) with "cmp" enrollment protocol. Because the registrar does not offer "rrm" with "cmp", or
+"prm" with "est", it is not possible to coalese all variations under one Instance Name, so instead, two
+Instance Names have to be created, and with them the necessary (duplicate) RR.
+
+Note that the "-rrm" and "-prm" in the Instance Names are only explanatory and could be any mutually unique
+strings - as is true for the whole Instance Name. 
+
+Note too, that because both Instances share the same port number 4555 (and hence TCP socket), they both have
+to be provided by the same BRSKI application. If two separate applications where to be started on the
+dame host, one for "rrm", the other for "prm", then they would have separate sockets and hence port numbers.
+
+
+---
+Notes from Esko: DNS-SD working group - SRP currently draft in final review.
+some text for discover of local domain or domains... simpler devices = default domain name.
+
+some thread context examples ?
+
+CoAP registration directory - RFC to register. resorce directory
+can unicast or multicast could be multihop multicast...
+
+"/b/rv" -> resource name in COAP is endpoint
+
+our strings -> boolean flags...
+
+
+brski-ae: trying to make inband definition default and point to brski-disovery as "enhanced".
+
+can discovery also include port number ?
+  awkward mechanism "endpoint" = ip-address + port number
+  include complete server and port number..., scheme and port...
+
+annotate resources is possible, e.g.: title, explaining (adds to volume of data).
+
+TBD: deployment - lightweight end-to-end - uses CoAP 
+---
 
 ### GRASP {#grasp}
+
+#### Signaling
+
+This document does not specify a mandatory to implement set of signaling options to guarantee
+interoperability of discovery between initiator and responders when using GRASP. Like for the
+oter discovery mechanisms, these requirements will have to come from other specifications
+that outline what in {{GRASP}} is called the "security and transport substrate" to be used for
+GRASP.
+
+{{RFC8994}} specifies one such "security and transport substrate", which is zero-touch deployable.
+It is mandatory to support for initiators and responders implementing the so-called
+"Autonomic Network Infrastructure" (ANI). DULL GRASP is used for link-local discovery of
+proxies, and the ACP is used to automatically and securely build the connectivity for multi-hop discovery
+of registrars by proxies.
+
+#### Encoding
 
 To announce protocol variations with {{GRASP}}, the supported Variation is indicated in the 
 objective-value field of the GRASP objective, using the method of forming the Variation string term
@@ -503,20 +623,72 @@ the DNS-SD encoding is optimized for most compact encoding given the limit for D
 [M_FLOOD, 12340815, h'fe800000000000000000000000000001', 180000,
     [["AN_Proxy", 4, 1, "",
      [O_IPv6_LOCATOR,
-     h'fe800000000000000000000000000001', IPPROTO_TCP, 4443]
+     h'fe800000000000000000000000000001', IPPROTO_TCP, 4443],
      ["AN_Proxy", 4, 1, "prm",
      [O_IPv6_LOCATOR,
-     h'fe800000000000000000000000000001', IPPROTO_TCP, 4443]]
+     h'fe800000000000000000000000000001', IPPROTO_TCP, 4443],
+     ["AN_Proxy", 4, 1, "",
+     [O_IPv6_LOCATOR,
+     h'fe800000000000000000000000000001', IPPROTO_UDP, 4684]]
 ]
 ~~~~
 {: #grasp-example-1 title='GRASP example for a BRSKI registrar supporting RRM and PRM'}
 
 {{grasp-example-1}} is an example for a GRASP service announcement for "AN_Proxy" in support of BRSKI
-with both "rrm" and "prm" supported on the same socket.
+with both "rrm" and "prm" supported on the same socket (TCP port number) and for cBRSKI with
+COAP over DTLS.
+
+Note that one or more complete service instances (in the example 3) can be contained within a single GRASP message
+without the need for any equivalent to the Service Instance Name of the DNS-SD PTR RR or the
+Target name of the DNS-SD SRV RR. DNS-SD requires them because its encoding is
+decomposed into different RR, but it also intentionally introduces the Service Instance Name
+as an element for human interaction with selection (browsing and/or diagnostics of selection),
+something that the current GRASP objective-value encoding does not support.
+
+Because this GRASP encoding does not support service instance name, examples such as
+
+~~~~
+[M_FLOOD, 12340815, h'fe800000000000000000000000000001', 180000,
+    [["AN_Proxy", 4, 1, "",
+     [O_IPv6_LOCATOR,
+     h'fe800000000000000000000000000001', IPPROTO_TCP, 4443],
+     ["AN_Proxy", 4, 1, "",
+     [O_IPv6_LOCATOR,
+     h'fe800000000000000000000000000001', IPPROTO_UDP, 4684]]
+]
+
+[M_FLOOD, 42310815, h'fe800000000000000000000000000001', 180000,
+    [["AN_Proxy", 4, 1, "prm",
+     [O_IPv6_LOCATOR,
+     h'fe800000000000000000000000000001', IPPROTO_TCP, 44000]]
+]
+~~~~
+{: #grasp-example-2 title='GRASP example with two different processes'}
+
+In {{grasp-exampl-2}}, A separate application process supports "prm" and hence
+uses a separate socket, with example TCP port 44000. In this case, there is
+no need nor significant benefit to merge all service instance announcements into
+a single GRASP message. Instead, the BRKSI-"rrm"/cBRSKI process would be
+able to generate and send its own, first, message shown in the example, and the
+second process would send its own, second message in the example.
+
+For a more extensive, DNS-SD compatible encoding of the objective-value that also
+support Service Instance Names, see {{I-D.eckert-anima-grasp-dnssd}}.
 
 ### CORE-LF
 
-TBD
+#### Signalling
+
+"Web Linking", {{RFC5988}} defines defines a format, originally for use with
+HTTP headers, to link a HTTP document against other URIs. Web linking is not a standalone
+method for discovery of services for use with HTTP.
+
+"Constrained RESTful Environments (CoRE) Link Format", {{CORE-LF}} introduces a
+standalone method to discover services instances (called resources in CORE-LF).
+An initiator connects to a previously discovered initiator and uses CORE-LF
+to discover the available service instances and their COAP parameters, such as
+their endpoints and service parameters.
+
 
 # IANA considerations
 
@@ -553,6 +725,8 @@ Spec / Applicability:
 : A "-" indicates that the variation is considered to be feasible through existing specifications, but not explicitly mentioned in them.
   An "NA" indicates that the combination is assumed to be not working with the currently available specifications.
 
+
+
 | Context         | Applicable Variation Types | Service Name(s)|
 |:----------------|:---------------------------|:--------------|
 | BRSKI           | mode<br>vformat<br>enroll  | GRASP:  "AN_join_registrar" / "AN_Proxy" with IPPROTO_TCP<br>DNS-SD: "brski-registrar" / "brski-proxy" with TCP|
@@ -573,9 +747,13 @@ Spec / Applicability:
 |                 |         | scep      | ThisRFC                | Rsvd | {{RFC8894}}                                                          |
 {: #fig-choices title="BRSKI Variation Type Choices"}
 
-| Context | Spec / Applicability        | Variation String| Variation | Explanations|
+Note 1:
+: The Variation String "EST-TLS" is equivalent to the Variation String "" and is required and only permitted for the AN_join_registrar objective value in GRASP for backward compatiblity with RFC8995, where it is used for this variation. Note that AN_proxy uses "".
+
+
+| Context | Spec / Applicability        | Variation String| Variation | Explanations / Notes|
 |:--------|:----------------------------|:---------------------|:----------|:------------|
-| BRSKI   |[RFC8995]                    | ""            | rrm cms  est |                 |
+| BRSKI   |[RFC8995]                    | "" / "EST-TLS"| rrm cms  est | Note 1          |
 |         |{{I-D.ietf-anima-brski-ae}}  | cmp           | rrm cms  cmp |                 |
 |         |{{I-D.ietf-anima-brski-prm}} | prm           | prm jose est |                 |
 |         |                             |               |              |                 |
