@@ -1,5 +1,7 @@
 From:
 https://support.huawei.com/enterprise/en/doc/EDOC1100270078/dff7d5f7/remote-attestation-diagnostic-commands
+Archived at:
+https://web.archive.org//web/20231004165348/https://support.huawei.com/enterprise/en/doc/EDOC1100270078/dff7d5f7/remote-attestation-diagnostic-commands
 
 CLI:
   system-view
