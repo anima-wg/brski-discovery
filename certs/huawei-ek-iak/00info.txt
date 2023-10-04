@@ -76,3 +76,8 @@ $ openssl x509 -in iak.pem -text -noout
             Not After : Sep  8 03:31:09 2020 GMT
         Subject: C = CN, O = Huawei, OU = Router and Carrier Ethernet Product Line, CN = 2102351TQD10K1000126.huawei.com
 ...
+Interpretation:
+  EK snd IAK seem to be terms from "Trusted Compute Group":
+    https://trustedcomputinggroup.org/wp-content/uploads/TCG_IWG_DevID_v1r2_02dec2020.pdf
+  IAK seems to be another term for IDevID.
+  EK seems to be unrelated to IDevID, maybe it is just to identify the TPM.
