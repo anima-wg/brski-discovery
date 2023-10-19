@@ -4,12 +4,15 @@
 
 ANIMA                                                     T. Eckert, Ed.
 Internet-Draft                                                 Futurewei
-Intended status: Standards Track                        5 September 2023
-Expires: 8 March 2024
+Intended status: Standards Track                           D. von Oheimb
+Expires: 21 April 2024                                           Siemens
+                                                                 E. Dijk
+                                                       IoTconsultancy.nl
+                                                         19 October 2023
 
 
                      Discovery for BRSKI variations
-                 draft-eckert-anima-brski-discovery-00
+                 draft-eckert-anima-brski-discovery-01
 
 Abstract
 
@@ -32,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 March 2024.
+   This Internet-Draft will expire on 21 April 2024.
 
 Copyright Notice
 
@@ -50,51 +53,66 @@ Copyright Notice
 
 
 
-
-
-
-Eckert                    Expires 8 March 2024                  [Page 1]
+Eckert, et al.            Expires 21 April 2024                 [Page 1]
 
-Internet-Draft               BRSKI-discovery              September 2023
+Internet-Draft               BRSKI-discovery                October 2023
 
 
 Table of Contents
 
-   1.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   2
+   1.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
    2.  Overview  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
-   3.  Specification . . . . . . . . . . . . . . . . . . . . . . . .   5
+   3.  Specification . . . . . . . . . . . . . . . . . . . . . . . .   6
      3.1.  Abstracted BRSKI discovery and selection  . . . . . . . .   6
      3.2.  Variation Contexts  . . . . . . . . . . . . . . . . . . .   6
      3.3.  Variation Types and Choices . . . . . . . . . . . . . . .   7
      3.4.  Variations  . . . . . . . . . . . . . . . . . . . . . . .   8
      3.5.  BRSKI Variations Discovery Registry . . . . . . . . . . .   8
        3.5.1.  BRSKI Variation Contexts table  . . . . . . . . . . .   8
-       3.5.2.  BRSKI Variation Type Choices table  . . . . . . . . .   8
-       3.5.3.  BRSKI Discoverable Variations table . . . . . . . . .   9
-       3.5.4.  Extending or modifying the registry . . . . . . . . .  10
+       3.5.2.  BRSKI Variation Type Choices table  . . . . . . . . .   9
+       3.5.3.  BRSKI Discoverable Variations table . . . . . . . . .  10
+       3.5.4.  Extending or modifying the registry . . . . . . . . .  11
      3.6.  BRSKI Join Proxies support for Variations . . . . . . . .  11
-       3.6.1.  Permissible Variations  . . . . . . . . . . . . . . .  11
+       3.6.1.  Permissible Variations  . . . . . . . . . . . . . . .  12
        3.6.2.  Join Proxy support for Variations . . . . . . . . . .  12
        3.6.3.  Co-location of Proxy and Registrar  . . . . . . . . .  13
-     3.7.  Variation encoding rules for discovery mechanisms . . . .  13
-       3.7.1.  DNS-SD  . . . . . . . . . . . . . . . . . . . . . . .  13
-       3.7.2.  GRASP . . . . . . . . . . . . . . . . . . . . . . . .  14
-       3.7.3.  CORE-LF . . . . . . . . . . . . . . . . . . . . . . .  15
-   4.  IANA considerations . . . . . . . . . . . . . . . . . . . . .  15
-     4.1.  BRSKI Variations Discovery Registry (section) . . . . . .  15
-     4.2.  Service Names Registry  . . . . . . . . . . . . . . . . .  19
-     4.3.  BRSKI Well-Known URIs fixes (opportunistic) . . . . . . .  19
-   5.  Security Considerations . . . . . . . . . . . . . . . . . . .  20
-   6.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  20
-   7.  Changelog . . . . . . . . . . . . . . . . . . . . . . . . . .  20
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  20
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  20
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .  22
-   Appendix A.  Discovery for constrained BRSKI  . . . . . . . . . .  22
-     A.1.  Current constrained text for GRASP  . . . . . . . . . . .  23
-       A.1.1.  Issues and proposed change  . . . . . . . . . . . . .  24
-   Contributors  . . . . . . . . . . . . . . . . . . . . . . . . . .  25
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  25
+     3.7.  BRSKI Pledges support for Variations  . . . . . . . . . .  14
+       3.7.1.  BRSKI-PLEDGE context  . . . . . . . . . . . . . . . .  14
+     3.8.  Variation signaling and encoding rules for different
+           discovery mechanisms  . . . . . . . . . . . . . . . . . .  18
+       3.8.1.  DNS-SD  . . . . . . . . . . . . . . . . . . . . . . .  18
+       3.8.2.  GRASP . . . . . . . . . . . . . . . . . . . . . . . .  21
+       3.8.3.  CORE-LF . . . . . . . . . . . . . . . . . . . . . . .  23
+   4.  Updates to existing RFCs  . . . . . . . . . . . . . . . . . .  24
+     4.1.  RFC8995 . . . . . . . . . . . . . . . . . . . . . . . . .  24
+   5.  IANA considerations . . . . . . . . . . . . . . . . . . . . .  24
+     5.1.  BRSKI Variations Discovery Registry (section) . . . . . .  24
+     5.2.  Service Names Registry  . . . . . . . . . . . . . . . . .  28
+     5.3.  BRSKI Well-Known URIs fixes (opportunistic) . . . . . . .  29
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  29
+   7.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  30
+   8.  Draft considerations  . . . . . . . . . . . . . . . . . . . .  30
+     8.1.  Open Issues . . . . . . . . . . . . . . . . . . . . . . .  30
+     8.2.  Changelog . . . . . . . . . . . . . . . . . . . . . . . .  30
+   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  30
+     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  30
+     9.2.  Informative References  . . . . . . . . . . . . . . . . .  32
+   Appendix A.  Discovery for constrained BRSKI  . . . . . . . . . .  33
+     A.1.  Current constrained text for GRASP  . . . . . . . . . . .  33
+       A.1.1.  Issues and proposed change  . . . . . . . . . . . . .  35
+   Contributors  . . . . . . . . . . . . . . . . . . . . . . . . . .  35
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  36
+
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                 [Page 2]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
 
 1.  Terminology
 
@@ -106,13 +124,6 @@ Table of Contents
 
    This document relies on the terminology defined in Section 1.  The
    following terms are described partly in addition.
-
-
-
-Eckert                    Expires 8 March 2024                  [Page 2]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
 
    Context:  See Variation Context.
 
@@ -151,6 +162,14 @@ Internet-Draft               BRSKI-discovery              September 2023
       in this document to apply to any other discovery functionality/
       API.  The terminology used by other mechanisms typically differs.
       For example, when Section 1 is used to discover a responder socket
+
+
+
+Eckert, et al.            Expires 21 April 2024                 [Page 3]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
       for BRSKI, the Objective Name carries the equivalent to the
       service name.  In Section 1, the Resource Type (rt=) carries the
       equivalent of the service name.
@@ -162,13 +181,6 @@ Internet-Draft               BRSKI-discovery              September 2023
       discoverable BRSKI communications.  For example, in the context of
       BRSKI, a variation is one choice for "mode", one choice for
       "enroll" and once choice for "vformat".
-
-
-
-Eckert                    Expires 8 March 2024                  [Page 3]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
 
    Variation Context:  A set of Services for whom the same set of
       variations applies
@@ -186,50 +198,51 @@ Internet-Draft               BRSKI-discovery              September 2023
 
    ACP:  "An Autonomic Control Plane", [RFC8994].
 
-   BRSKI:  "Bootstrapping Remote Secure Key Infrastructure", [RFC8995]
+   BRSKI:  "Bootstrapping Remote Secure Key Infrastructure", [RFC8995].
 
    BRSKI-AE:  "Alternative Enrollment Protocols in Section 1",
-      [I-D.ietf-anima-brski-ae]
+      [I-D.ietf-anima-brski-ae].
 
    BRSKI-PRM:  "Section 1 with Pledge in Responder Mode",
-      [I-D.ietf-anima-brski-prm]
+      [I-D.ietf-anima-brski-prm].
 
    cBRSKI:  "Constrained Bootstrapping Remote Secure Key Infrastructure
-      (Section 1)", [I-D.ietf-anima-constrained-voucher]
+      (Section 1)", [I-D.ietf-anima-constrained-voucher].
 
-   COAP:  "The Constrained Application Protocol (CoAP)", [RFC7252]
+   COAP:  "The Constrained Application Protocol (CoAP)", [RFC7252].
 
    CORE-LF:  "Constrained RESTful Environments (CoRE) Link Format",
       [RFC6690].
 
    cPROXY:  "Constrained Join Proxy for Bootstrapping Protocols",
-      [I-D.ietf-anima-constrained-join-proxy]
+      [I-D.ietf-anima-constrained-join-proxy].
 
    DNS-SD:  "DNS-Based Service Discovery", [RFC6763].
 
-   EST:  "Enrollment over Secure Transport", [RFC7030]
+
+
+Eckert, et al.            Expires 21 April 2024                 [Page 4]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+   EST:  "Enrollment over Secure Transport", [RFC7030].
 
    GRASP:  "GeneRic Autonomic Signaling Protocol", [RFC8990].
 
    GRASP-DNSSD:  "DNS-SD Compatible Service Discovery in GeneRic
       Autonomic Signaling Protocol (GRASP)",
-      [I-D.eckert-anima-grasp-dnssd]
+      [I-D.eckert-anima-grasp-dnssd].
 
    JWS-VOUCHER:  "JWS signed Voucher Artifacts for Bootstrapping
-      Protocols", [I-D.ietf-anima-jws-voucher]
-
-
-
-
-Eckert                    Expires 8 March 2024                  [Page 4]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
+      Protocols", [I-D.ietf-anima-jws-voucher].
 
    lwCMP:  "Lightweight Certificate Management Protocol (CMP) Profile",
-      [I-D.ietf-lamps-lightweight-cmp-profile]
+      [I-D.ietf-lamps-lightweight-cmp-profile].
 
-   SCEP:  "Simple Certificate Enrolment Protocol", [RFC8894]
+   mDNS:  "multicast DNS", [RFC6762].
+
+   SCEP:  "Simple Certificate Enrolment Protocol", [RFC8894].
 
 2.  Overview
 
@@ -260,6 +273,15 @@ Internet-Draft               BRSKI-discovery              September 2023
    registries can reduce such inconsistencies and easy introduction of
    additional discovery mechansisms.
 
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                 [Page 5]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
    Generalization of principles related to discovery and operation of
    proxies.
 
@@ -269,18 +291,6 @@ Internet-Draft               BRSKI-discovery              September 2023
    networks such as Thread, which use Section 1.
 
 3.  Specification
-
-
-
-
-
-
-
-
-Eckert                    Expires 8 March 2024                  [Page 5]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
 
 3.1.  Abstracted BRSKI discovery and selection
 
@@ -320,6 +330,14 @@ Internet-Draft               BRSKI-discovery              September 2023
    variations defines a common set of variations.  The initial registry
    defined in this document defines two variation contexts.
 
+
+
+
+Eckert, et al.            Expires 21 April 2024                 [Page 6]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
    BRSKI context:  context for discovery of BRSKI registrar and proxy
       variations by proxies, pledges or agents (as defined in Section 1)
       via the Service Names defined for Section 1 and Section 1 via TCP
@@ -330,13 +348,6 @@ Internet-Draft               BRSKI-discovery              September 2023
       registrar and proxy variations by proxies, pledges via the Service
       Names defined for Section 1, Section 1 and Section 1 via UDP, and
       hence (by default) secure COAP.
-
-
-
-Eckert                    Expires 8 March 2024                  [Page 6]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
 
    Note that the Service Names for cBRSKI include the same Section 1
    Service Names as for the BRSKI context, hence enabling the use of
@@ -370,6 +381,19 @@ Internet-Draft               BRSKI-discovery              September 2023
    types introduces three variation types as follows:
 
    mode:  A variation in the basic sequence of URI endpoints
+
+
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                 [Page 7]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
       communicated.  This document introduces the choices of "rrm" to
       indicate the endpoints and sequence as defined in Section 1 and
       "prm" to indicate the nedpoints and sequence as defined in
@@ -384,23 +408,19 @@ Internet-Draft               BRSKI-discovery              September 2023
       defined in Section 1 and "jose" as defined in Section 1.
 
    enroll:  A variation in the URI endpoints used for enrollment of the
-
-
-
-
-
-Eckert                    Expires 8 March 2024                  [Page 7]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
-
       pledge with keying material (trust anchors and certificate
-      (chain)).  This document introduces the choices "est" as
-      introduced by Section 1 (to indicate the Section 1 protocol) and
-      "cmp" to indicate the lightweight CMP profile (Section 1)
-      introduced by Section 1.  It also reserved the choice "scep" to
-      indicate Section 1.  This is only a reservation, because no
-      specification for the use of Section 1 with BRSKI exist.
+      (chain)).  This document introduces the following :choices
+
+      *  "est" as introduced by Section 1 to indicate the Section 1
+         protocol, which is default
+
+      *  "cmp" to indicate the CMP protocol according to the Lightweight
+         CMP profile (Section 1).  The respective adaptations to BRSKI
+         have been introduced by Section 1.
+
+      *  "scep" to indicate Section 1.  This is only a reservation,
+         because no specification for the use of Section 1 with BRSKI
+         exists.
 
 3.4.  Variations
 
@@ -413,12 +433,22 @@ Internet-Draft               BRSKI-discovery              September 2023
 3.5.  BRSKI Variations Discovery Registry
 
    The IANA "BRSKI Variations Registry" as specified by this document,
-   see Section 4.1 specifies the defined parameters for discovery of
+   see Section 5.1 specifies the defined parameters for discovery of
    BRSKI variations.
 
 3.5.1.  BRSKI Variation Contexts table
 
-   This table (Table 1, defines the BRSKI Variations Contexts.
+   This table, Table 1, defines the BRSKI Variations Contexts.
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                 [Page 8]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
 
    The "Applicable Variation Types" lists the Variation Types from whose
    choices a Variation for this context is formed.  The "Service
@@ -427,7 +457,7 @@ Internet-Draft               BRSKI-discovery              September 2023
 
 3.5.2.  BRSKI Variation Type Choices table
 
-   This table (Table 2) defines the Variations Type Choices.
+   This table, Table 2, defines the Variations Type Choices.
 
    The "Context" column lists the BRSKI Variation Context(s) to which
    this line applies.  If it is empty, then the same Context(s) apply as
@@ -439,16 +469,6 @@ Internet-Draft               BRSKI-discovery              September 2023
    Type column.  Variation Types MUST the listed in the order in which
    the Variation Types are listed in the Applicable Variation Types
    column of the BRSKI Variation Contexts table.
-
-
-
-
-
-
-Eckert                    Expires 8 March 2024                  [Page 8]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
 
    The "Variation Type Choice" column defines a Variation Type Choice
    term within the Context(s) of the line.  To allow the most flexible
@@ -477,6 +497,15 @@ Internet-Draft               BRSKI-discovery              September 2023
    "est" and "cms" are default in the BRSKI context, this Discovery
    signalling indicates the support for those Variation Type Choices.
 
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                 [Page 9]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
    The "Dflt_" Flag specifies a Variation Type Choice that is only
    default in a subset of Discovery options in a context.  The Note(s)
    column has then to explain which subset this is.  Like for "Dflt",
@@ -499,13 +528,6 @@ Internet-Draft               BRSKI-discovery              September 2023
    This table Table 3 enumerates the Discoverable Variations and
    categorizes them.
 
-
-
-Eckert                    Expires 8 March 2024                  [Page 9]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
-
    The "Context" column lists the BRSKI Variation Context(s) to which
    this line applies.  If it is empty, then the same Context(s) apply as
    that of the last prior line with a non-empty Context column.
@@ -527,11 +549,18 @@ Internet-Draft               BRSKI-discovery              September 2023
 
    The "Variation String" column has the string term used to indicate
    the variation when using the simple encoding of BRSKI Variation
-   Discovery for GRASP as described in Section 3.7.2.  It is formed by
+   Discovery for GRASP as described in Section 1.  It is formed by
    concatenating the Choices term from the Variation colum with the "-"
    character, excluding those Choices terms (and "-" concatenator) which
    are Default for the Context.  If this procedure ends up with the
    empty string, then this is indicated as "" in the column.
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 10]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
 
    The "Explanations" column explains the "Spec / Applicability" status
    of the Variation.
@@ -554,14 +583,6 @@ Internet-Draft               BRSKI-discovery              September 2023
    Reservation of additional Variation Type Choices requires (only)
    expert review.
 
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 10]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
-
    Additional Contexts MUST be added at the end of the BRSKI Variation
    Contexts table.
 
@@ -583,6 +604,19 @@ Internet-Draft               BRSKI-discovery              September 2023
    existing lines for the Context.
 
 3.6.  BRSKI Join Proxies support for Variations
+
+
+
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 11]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
 
 3.6.1.  Permissible Variations
 
@@ -610,14 +644,6 @@ Internet-Draft               BRSKI-discovery              September 2023
    For example, the stateless join proxy mode defined by Section 1 is
    such a mechanism that requires explicit join proxy support.
    Therefore, registrars sockets that support circuit proxy mode use the
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 11]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
-
    GRASP objective "AN_join_registrar", and registrar sockets that
    support stateless join proxy mode use the GRASP objective
    "AN_join_registrar_rjp".  This enables join proxies to select the
@@ -640,6 +666,14 @@ Internet-Draft               BRSKI-discovery              September 2023
    To meet these requirements, join proxies can employ different
    implementation option.  In the most simple one, a join proxy
    allocates a separate responder socket for every Variation for which
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 12]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
    it discovers one or more registrars supporting this Variation.  It
    then announces that socket with only that one Variation in the
    discovery mechanism, even if the Registrar(s) are all announcing
@@ -666,14 +700,6 @@ Internet-Draft               BRSKI-discovery              September 2023
    separate socket for each of these registrars - and their variations,
    so that the join proxy can equally announce the same priority and
    weight for both sockets to initiators.  This allows to maintain the
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 12]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
-
    desired weights of use of registrars, even when the join proxy
    operates in stateless mode, in which it can not select a separate
    registrar for every client initiating a connection.
@@ -696,43 +722,301 @@ Internet-Draft               BRSKI-discovery              September 2023
    support of pledge or other initiators.  Pledges and other initiators
    SHOULD always only look for the proxy Service Name, and only Proxies
    should look for a registrar Service Name.  Registrars therefore
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 13]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
    SHOULD always include the proxy functionaliy according to the prior
    paragraph.  This only involves additional code on the registrar
    beyond the service announcement in case the Registrar would otherwise
    not implement circuit mode.
 
-3.7.  Variation encoding rules for discovery mechanisms
+3.7.  BRSKI Pledges support for Variations
 
-3.7.1.  DNS-SD
+3.7.1.  BRSKI-PLEDGE context
 
-   Currently defined Variation Type Choices are encoded as Section 1
-   Keys with a value of 1 in the DNS-SD service instances TXT Record.
-   This is possible because all Variation Type Choices are required to
-   be unique across all Variation Types.  It also allows to shorten the
-   encoding from "key=1" to just "key" for every Variation Type Choice,
-   so that the TXT-DATA encoding can be more compact.
+   BRSKI-PLEDGE is the context for discovery of pledges by nodes such as
+   registrar-agents.  Pledges supporting Section 1 MUST support it.  It
+   may also be used by other variations of BRSKI when supported by
+   pledges.
+
+   Pledges supporting BRSKI-PLEDGE MUST support DNS-SD for discovery via
+   mDNS, using link-local scope.  For DNS-SD discovery beyond link-local
+   scope, pledges SHOULD support DNS-SD via [I-D.ietf-dnssd-srp].
+
+   TBD: Is there sufficient autoconfiguration support in
+   [I-D.ietf-dnssd-srp], that pledges without any configuration can use
+   it, and if so, do we need to raise specific additional requirements
+   to enable this in pledges ?
+
+   These DNS-SD requirements are defaults.  Specifications for specific
+   deployment contexts such as specific type of radio network solutions
+   may need to specify their own requirements overriding or amending
+   these requirements.
+
+   Pledges MUST support to be discoverable via their service instance
+   name.  They MAY be discoverable via DNS-SD browsing, so that
+   registrar-agents can find even unexpected pledges through DNS-SD
+   browsing.
+
+   XXX
+
+   Support for browsing is required to discover over the network pledges
+   supporting only Section 1, but not Section 1 if they have no known
+   serial-number information from which their service instance name can
+   be constructed, so it is a crucial feature for robust enrollment.
+   See Section 6 for more details about discovery and BRSKI-PLEDGE.
+
+   When pledges are discoverable vis DNS-SD browsing, they MUST expect
+   that a large number of pledges exist in the network at the same time,
+   such as in the order of 100 or more, and schedule their responses
+   according to the procedures in Section 1 and Section 1 to avoid
+   simultaneous reply from all pledges.
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 14]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+   TBD: What is the best section in mDNS/DNS-SD to point to for this
+   timed reply to scale ?
+
+   Browsing via DNS-SD for a pledge is circumvented by the pledge not
+   announcing its PTR RR for "brski-registrar".  Technically, the
+   remaining RR may not constitute full DNS-SD service, but they do
+   provide the required discovery for the known service instance name of
+   the pledge.
+
+   counter measures such as limiting the number and rate of PRM connects
+   that they accept, ideally on a per-initiator basis (assuming that
+   DDoS attacks are more harder to mount than single attacker DoS
+   attacks).
+
+3.7.1.1.  Service Instance Name
+
+   The servce instance name choosen by a BRSKI pledge MUST be composed
+   from information which is
+
+   *  Easily known by BRSKI operations, such as the operational
+      personnel or software automation, specifically sales integration,
+
+   *  Available to the pledges BRSKI software itself, for example by
+      being encoded in some attribute of the IDevID.
+
+   Typically, a customer will know the serial number of a product from
+   sales information, or even from barcode/QR-codes on the product
+   itself.  If this serial number is used as the service instance name
+   to discover a pledge from a registrar-agent, then this may lead to
+   possible duplicate replies from two or more pledges having the same
+   serial number, such as in the following cases:
+
+   1.  A manufacturer has different product lines and re-uses serial-
+       numbers across them.
+
+   2.  Two different manufacturer re-use the same serial-numbers.
+
+   If pledges enable browsing of their service instance name, they MAY
+   support Section 1 specified procedures to create unique service
+   instance names when they discover such clashes, by appending a space
+   and serial number, starting with 2 to the service instance name:
+   "<service-instance-name> (2)", as described in Section 1 Appendix D.
+
+   Nevertheless, this approach to resolving conflights is not desirable:
+
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 15]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+   *  If browsing of DNS-SD service instance name is not supported,
+      registrar-agents would have to always (and mostly wrongly) guess
+      that there is a clash and (mostly unnecessarily) search for
+      "<service-instance-name> (2)".
+
+   *  If a clash exists between pledges from the same manufacturer, and
+      even if the registrar-agent then attempts to start enrolling all
+      pledges with the same clashing service instance name, it may not
+      have enough information to determine which the correct pledge is.
+      This would happen especially if the IDevId from both devices (of
+      different product type), had the same serial number, and the CA of
+      both was the same (because they come from the same manufacturer).
+      Even if some other IDevID field was used to distinguish their
+      device model, the registrar-agent would not be able to determine
+      that difference without additional vendor specific programming.
+
+   In result:
+
+   *  Vendors MUST document a scheme how their pledges form a service
+      instance name from information available to the customer of the
+      pledge.
+
+   *  These service instance names MUST be unique across all IDevID of
+      the manufacturer that share the same CA.
+
+   The following mechanisms are recommended:
+
+   *  Pledges SHOULD encode manufacturer unique product instance
+      information in their subject name serialNumber.  [RFC5280] calls
+      this the X520SerialNumber.
+
+   *  Pledges SHOULD make this serialNumber information consistent with
+      easily accessible product instance information when in physcial
+      posession of the pledge, such as product type code and serial
+      number on barcode/QR-code to enable Section 1 discovery without
+      additional backend sales integration.  Note that discovery alone
+      does not allow for enrollment!
+
+   *  Pledges SHOULD construct their service instance name by
+      concatenating their X520SerialNumber with a domain name prefix
+      that is used by the manufacturer and thus allows to disambiguate
+      devices from different manufacturer using the same serialNumber
+      scheme, and hence the likelyhood of service instance name clashes.
+
+
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 16]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+Service Instance Name:
+  "PID:Model-0815 SN:WLDPC2117A99.example.com"
+
+Manufacturer published Service Instance Name schema:
+ PID:\<PID>\\ SN:\<SN>.example.com
+
+Pledge IDevID certificate information:
+  ; Format as shown by e.g.: openssh
+  Subject: serialNumber = "PID:Model-0815 SN:WLDPC2117A99", O = Example, CN = Model-0815
+
+DNS-SD RR for the pledge:
+  ; PTR RR to support browsing / discovery of service instance name
+  _brski-pledge._tcp.local  IN PTR
+    PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com._brski-pledge._tcp.local
+
+  ; SRC and TXT RR for the service instance name
+  PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com._brski-pledge._tcp.local
+    IN SRV 1 1
+    PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com.local
+  PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com._brski-pledge._tcp.local
+    IN TXT ""
+
+  ; AAAA address resolution for the target host name
+  PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com.local
+    IN AAAA fda3:79a6:f6ee:0000::0200:0000:6400:00a1
+
+             Figure 1: Example service instance name data
+
+   In Figure 1, the manufacturer "example" identifies device instances
+   through a product identifier <PID> and a serial number <SN>.  Both
+   are printed on labels on the product/packaging and/or communicated
+   during purchase of the product.
+
+   The service instance name of pledges from this manufacturer are using
+   the string "PID:<PID> SN:<SN>.example.com". "example.com" is assumed
+   to be a domain owned by this manufacturer. <PID> and <SN> are
+   replaced by the actual strings.
+
+   The IDevID encodes the service instance name without the domain
+   ending (".example.com") in the X520SerialNumber field.  Other fields
+   of the IDevID are not used.
+
+   The resulting DNS-SD RRs that the pledge announces are shown in the
+   example. " " and "." characters are escaped as recommended by
+   Section 1.
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 17]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+   In this example, the same string as constructed for the service
+   instance name is also used as the target host name.  This is of
+   course not necessary, but unless the pledge already obtains a host
+   name through other DNS means, re-using the same name allows to avoid
+   coming up with a second method to construct a unique name.
+
+3.8.  Variation signaling and encoding rules for different discovery
+      mechanisms
+
+3.8.1.  DNS-SD
+
+3.8.1.1.  Signaling
+
+   The following definitions apply to any instantiation of DNS-SD
+   including DNS-SD via mDNS as defined in Section 1, but also via
+   unicast DNS, for example by registering the necessary DNS-SD Resource
+   Records (RR) via [I-D.ietf-dnssd-srp] (SRP).
+
+   The requirements in this document do not guarantee interoperability
+   when using DNS-SD, instead, they need to be amended with deployment
+   specific specifications / requirements as to which signaling
+   variation, such as mDNS or unicast DNS with SRP is to be supported
+   between initiator and responder.  When using unicast DNS (with SRP),
+   additional mechanisms are required to learn the IP / IPv6 address(es)
+   of feasible DNS and SRP servers, and deployment may also need
+   agreements for the (default) domain they want to use in unicast DNS.
+   Hence, a mandatory to implement (MTI) profile is not feasible because
+   of the wide range of variations to deploy DNS-SD.
+
+   TBD: We could say that mDNS MUST be supported, unless the network
+   context defines an interoperable mode to support DNS-SD without mDNS
+   ???
+
+3.8.1.2.  Encoding
+
+   Variation Type Choices defined in the IANA registry Table 3 are
+   encoded as Section 1 Keys with a value of 1 in the DNS-SD service
+   instances TXT RR.  This is possible because all Variation Type
+   Choices are required to be unique across all Variation Types.  It
+   also allows to shorten the encoding from "key=1" to just "key" for
+   every Variation Type Choice, so that the TXT-DATA encoding can be
+   more compact.
 
    If the TXT Record does not contain a Variation Type Choice for a
    particular applicable Variation Type, then this indicates support for
    the Default Choice of this Variation Type in the context of the DNS-
    SD Service Name.  For example, if the TXT Record is "jose", then this
    indicates support for "rrm" and "est", if the Service Name is brski-
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 18]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
    registrar or brski-proxy and the protocol is TCP (BRSKI Context), but
    also when the protocol is UDP (cBRSKI context), because "rrm" and
    "est" are defaults in both contexts.
 
-
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 13]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
-
    If multiple Variation Type Choices for the same Variation Type are
    indicated, then this implies that either of these Variation Type
-   Choices is supported in conjunction with any of the othrer Variation
+   Choices is supported in conjunction with any of the other Variation
    Type Choices in the same TXT Record.  For example, if the TXT Record
    is "prm" "rrm" "cms" "jose", then this implies support for rrm-cms-
    est, rrm-jose-est, prm-cms-est and prm-jose-est.  This example also
@@ -741,22 +1025,177 @@ Internet-Draft               BRSKI-discovery              September 2023
    as supported, then both need to be included in the TXT Record.
 
    In Section 1, a responder does not only indicate a Service Name, but
-   also its Service Instance Name.  This specification makes no
-   recommendation for choosing the Instance portion of that name.
-   Usually it is the same, or derived from some form of system name.  If
-   the responder needs to indicate different sockets for differernt (set
-   of) Variations, for example, when operating as a proxy, according to
-   Section 3.6.2, then it needs to signal for each socket a separate
-   Service Instance Name with the appropriate port information in its
-   SRV Record and the supported Variations for that socket in the TXT
-   Record of that Service Instance Name.  In this case, it is
+   also its Service Instance Name, which needs to be unique across the
+   domain to support initiators selecting a responder.  This
+   specification makes no recommendation for choosing the Instance
+   portion of that name.  Usually it is the same, or derived from some
+   form of pre-existing system name.
+
+   Registrars SHOULD support support their configuration without
+   specifying a name to use in the Service Instance Name to minimize the
+   amount of configuration required.  Registrars SHOULD support the
+   configuration of such a name.
+
+   If the responder needs to indicate different sockets for differernt
+   (set of) Variations, for example, when operating as a proxy,
+   according to Section 3.6.2, then it needs to signal for each socket a
+   separate Service Instance Name with the appropriate port information
+   in its SRV Record and the supported Variations for that socket in the
+   TXT Record of that Service Instance Name.  In this case, it is
    RECOMMENDED that the Instance Name includes the Variation it
    supports, such as in the format specified in Section 3.5.3 and used
    in the Variation String column of the Table 3 table.
 
-   TBD: Add an example for DNS-SD.
 
-3.7.2.  GRASP
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 19]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+                  _brski-registrar._tcp.local
+                  IN PTR  0200:0000:7400._brski-registrar._tcp.local
+   0200:0000:7400._brski-registrar._tcp.local
+                   IN SRV  1 2 4555 0200:0000:7400.local
+   0200:0000:7400._brski-registrar._tcp.local IN TXT  "rrm" "prm"
+   0200:0000:7400.local
+                   IN AAAA  fda3:79a6:f6ee:0000::0200:0000:6400:0001
+
+                  _brski-registrar._udp.local
+                   IN PTR  0200:0000:7400._brski-registrar._udp.local
+   0200:0000:7400._brski-registrar._udp.local
+                   IN SRV  1 2 5684 0200:0000:7400.local
+   0200:0000:7400._brski-registrar._udp.local IN TXT  ""
+
+          Figure 2: DNS-SD for a simple BRSKI and cBRSKI registrar
+
+   In the above example Figure 3, a registrar supports BRSKI with "rrm"
+   and "prm" modes across the same TCP socket, port 4555.  It uses "cms"
+   voucher format and "est" enrollment, which are not included in the
+   TXT strings because both are default for _bski-registrar._tcp.  The
+   registrar also offers cBRSKI with "rrm" mode, "cose" voucher and
+   "est" enrollment on UDP port 5684, the COAP over DTLS default port.
+   The TXT RR for this has only an empty string because "rrm", "cose"
+   and "est" are default for cBRSKI.
+
+   As the instance name, the registrar uses in this example the MAC
+   address "0200:0000:7400", which is MAC address of the interface on
+   which the registrar has the IPv6 address
+   "fda3:79a6:f6ee:0000::0200:0000:6400:0001".  The registrar should
+   know that this MAC address is globally unique (assigned by IEEE).
+   Else it should instead use its IPv6 address as the Instance Name.
+   For example, if the registrar is just a software application not
+   knowing the specifics of the hardware it is running on, the MAC
+   address MUST NOT be used.  If only mDNS is used (as in this example),
+   then the IPv6 link-local address would also suffice as the Instance
+   Name.
+
+   In this example, a single Instance Name suffices, because BRSKI and
+   cBRSKI are two separate service contexts: they are distinguished by
+   different protocols: TCP vs. UDP.
+
+
+
+
+
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 20]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+  0123456789012345678901234567890123456789012345678901234567890123456789
+                     _brski-registrar._tcp.local
+                 IN PTR  0200:0000:7400-rrm._brski-registrar._tcp.local
+  0200:0000:7400-rrm._brski-registrar._tcp.local
+                 IN SRV  1 2 4555 0200:0000:7400-rrm.local
+  0200:0000:7400-rrm._brski-registrar._tcp.local IN TXT ""
+  0200:0000:7400-rrm.local
+                 IN AAAA fda3:79a6:f6ee:0000::0200:0000:6400:0001
+
+                     _brski-registrar._tcp.local
+                 IN PTR 0200:0000:7400-prm._brski-registrar._tcp.local
+  0200:0000:7400-prm._brski-registrar._tcp.local
+                 IN SRV 1 2 4555 0200:0000:7400-prm.local
+  0200:0000:7400-prm._brski-registrar._tcp.local
+                 IN TXT "prm" "cmp"
+  0200:0000:7400-prm.local
+                 IN AAAA fda3:79a6:f6ee:0000::0200:0000:6400:0001
+
+      Figure 3: DNS-SD for a BRSKI registrar supporting RRM and PRM
+
+   In the second example Figure 3, a registar needs to use two different
+   Instance Names, because both share the same service context: BRSKI -
+   TCP with service name brski-registar.  In this example, the registar
+   offers "rrm" mode with "cms" voucher and "est" enrollment.  It also
+   offers "prm" mode with "cms" voucher, but (only) with "cmp"
+   enrollment protocol.  Because the registrar does not offer "rrm" with
+   "cmp", or "prm" with "est", it is not possible to coalese all
+   variations under one Instance Name, so instead, two Instance Names
+   have to be created, and with them the necessary (duplicate) RR.
+
+   Note that the "-rrm" and "-prm" in the Instance Names are only
+   explanatory and could be any mutually unique strings - as is true for
+   the whole Instance Name.
+
+   Note too, that because both Instances share the same port number 4555
+   (and hence TCP socket), they both have to be provided by the same
+   BRSKI application.  If two separate applications where to be started
+   on the dame host, one for "rrm", the other for "prm", then they would
+   have separate sockets and hence port numbers.
+
+3.8.2.  GRASP
+
+
+
+
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 21]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+3.8.2.1.  Signaling
+
+   This document does not specify a mandatory to implement set of
+   signaling options to guarantee interoperability of discovery between
+   initiator and responders when using GRASP.  Like for the oter
+   discovery mechanisms, these requirements will have to come from other
+   specifications that outline what in Section 1 is called the "security
+   and transport substrate" to be used for GRASP.
+
+   [RFC8994] specifies one such "security and transport substrate",
+   which is zero-touch deployable.  It is mandatory to support for
+   initiators and responders implementing the so-called "Autonomic
+   Network Infrastructure" (ANI).  DULL GRASP is used for link-local
+   discovery of proxies, and the ACP is used to automatically and
+   securely build the connectivity for multi-hop discovery of registrars
+   by proxies.
+
+3.8.2.2.  Encoding
 
    To announce protocol variations with Section 1, the supported
    Variation is indicated in the objective-value field of the GRASP
@@ -774,40 +1213,106 @@ Internet-Draft               BRSKI-discovery              September 2023
    minimum parsing effort, whereas the DNS-SD encoding is optimized for
    most compact encoding given the limit for DNS-SD TXT records.
 
+   [M_FLOOD, 12340815, h'fe800000000000000000000000000001', 180000,
+       [["AN_Proxy", 4, 1, "",
+        [O_IPv6_LOCATOR,
+        h'fe800000000000000000000000000001', IPPROTO_TCP, 4443],
+        ["AN_Proxy", 4, 1, "prm",
+        [O_IPv6_LOCATOR,
+        h'fe800000000000000000000000000001', IPPROTO_TCP, 4443],
+        ["AN_Proxy", 4, 1, "",
+        [O_IPv6_LOCATOR,
+        h'fe800000000000000000000000000001', IPPROTO_UDP, 4684]]
+   ]
+
+    Figure 4: GRASP example for a BRSKI registrar supporting RRM and PRM
 
 
 
-
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 14]
+Eckert, et al.            Expires 21 April 2024                [Page 22]
 
-Internet-Draft               BRSKI-discovery              September 2023
+Internet-Draft               BRSKI-discovery                October 2023
 
+
+   Figure 4 is an example for a GRASP service announcement for
+   "AN_Proxy" in support of BRSKI with both "rrm" and "prm" supported on
+   the same socket (TCP port number) and for cBRSKI with COAP over DTLS.
+
+   Note that one or more complete service instances (in the example 3)
+   can be contained within a single GRASP message without the need for
+   any equivalent to the Service Instance Name of the DNS-SD PTR RR or
+   the Target name of the DNS-SD SRV RR.  DNS-SD requires them because
+   its encoding is decomposed into different RR, but it also
+   intentionally introduces the Service Instance Name as an element for
+   human interaction with selection (browsing and/or diagnostics of
+   selection), something that the current GRASP objective-value encoding
+   does not support.
+
+   Because this GRASP encoding does not support service instance name,
+   examples such as
 
    [M_FLOOD, 12340815, h'fe800000000000000000000000000001', 180000,
        [["AN_Proxy", 4, 1, "",
         [O_IPv6_LOCATOR,
-        h'fe800000000000000000000000000001', IPPROTO_TCP, 4443]
-        ["AN_Proxy", 4, 1, "prm",
+        h'fe800000000000000000000000000001', IPPROTO_TCP, 4443],
+        ["AN_Proxy", 4, 1, "",
         [O_IPv6_LOCATOR,
-        h'fe800000000000000000000000000001', IPPROTO_TCP, 4443]]
+        h'fe800000000000000000000000000001', IPPROTO_UDP, 4684]]
    ]
 
-    Figure 1: GRASP example for a BRSKI registrar supporting RRM and PRM
+   [M_FLOOD, 42310815, h'fe800000000000000000000000000001', 180000,
+       [["AN_Proxy", 4, 1, "prm",
+        [O_IPv6_LOCATOR,
+        h'fe800000000000000000000000000001', IPPROTO_TCP, 44000]]
+   ]
 
-   Figure 1 is an example for a GRASP service announcement for
-   "AN_Proxy" in support of BRSKI with both "rrm" and "prm" supported on
-   the same socket.
+            Figure 5: GRASP example with two different processes
 
-3.7.3.  CORE-LF
+   In Figure 5, A separate application process supports "prm" and hence
+   uses a separate socket, with example TCP port 44000.  In this case,
+   there is no need nor significant benefit to merge all service
+   instance announcements into a single GRASP message.  Instead, the
+   BRKSI-"rrm"/cBRSKI process would be able to generate and send its
+   own, first, message shown in the example, and the second process
+   would send its own, second message in the example.
 
-   TBD
+   For a more extensive, DNS-SD compatible encoding of the objective-
+   value that also support Service Instance Names, see
+   [I-D.eckert-anima-grasp-dnssd].
 
-4.  IANA considerations
+3.8.3.  CORE-LF
 
-4.1.  BRSKI Variations Discovery Registry (section)
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 23]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+3.8.3.1.  Signalling
+
+   "Web Linking", [RFC5988] defines defines a format, originally for use
+   with HTTP headers, to link a HTTP document against other URIs.  Web
+   linking is not a standalone method for discovery of services for use
+   with HTTP.
+
+   "Constrained RESTful Environments (CoRE) Link Format", Section 1
+   introduces a standalone method to discover services instances (called
+   resources in CORE-LF).  An initiator connects to a previously
+   discovered initiator and uses CORE-LF to discover the available
+   service instances and their COAP parameters, such as their endpoints
+   and service parameters.
+
+4.  Updates to existing RFCs
+
+4.1.  RFC8995
+
+   TBD.
+
+5.  IANA considerations
+
+5.1.  BRSKI Variations Discovery Registry (section)
 
    This document requests a new section named "BRSKI Variations
    Discovery Parameters" in the "Bootstrapping Remote Secure Key
@@ -832,15 +1337,17 @@ Internet-Draft               BRSKI-discovery              September 2023
    Notes:
 
    Dflt flag:  Indicates a Variation Type Choice that is assumed to be
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 24]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
       used if the service discover/selection mechanism does not indicate
       any variation.
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 15]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
 
    Rsvd Flag:  Indicates a Variation Type Choice that is reserved for
       use with the mechanism described in the Note(s) column, but for
@@ -852,39 +1359,37 @@ Internet-Draft               BRSKI-discovery              September 2023
       combination is assumed to be not working with the currently
       available specifications.
 
-          +=========+============+=============================+
-          | Context | Applicable | Service Name(s)             |
-          |         | Variation  |                             |
-          |         | Types      |                             |
-          +=========+============+=============================+
-          | BRSKI   | mode       | GRASP: "AN_join_registrar"  |
-          |         | vformat    | / "AN_Proxy" with           |
-          |         | enroll     | IPPROTO_TCP                 |
-          |         |            | DNS-SD: "brski-registrar" / |
-          |         |            | "brski-proxy" with TCP      |
-          +---------+------------+-----------------------------+
-          | cBRSKI  | mode       | GRASP: "AN_join_registrar"  |
-          |         | vformat    | / "AN_join_registrar_rjp" / |
-          |         | enroll     | "AN_Proxy" with IPPROTO_UDP |
-          |         |            | DNS-SD: "brski-registrar" / |
-          |         |            | "brski-proxy" SD with UDP   |
-          |         |            | CORE-LF: rt=brski.*         |
-          +---------+------------+-----------------------------+
+   +==============+============+===========+===========================+
+   | Context      | Applicable | Discovery | Service Name(s)           |
+   |              | Variation  | Mechanism |                           |
+   |              | Types      |           |                           |
+   +==============+============+===========+===========================+
+   | BRSKI        | mode       | GRASP     | "AN_join_registrar" /     |
+   |              | vformat    |           | "AN_Proxy"                |
+   |              | enroll     |           | with IPPROTO_TCP          |
+   +--------------+------------+-----------+---------------------------+
+   |              |            | DNS-SD    | "brski-registrar" /       |
+   |              |            |           | "brski-proxy"             |
+   |              |            |           | with TCP                  |
+   +--------------+------------+-----------+---------------------------+
+   | cBRSKI       | mode       | GRASP     | "AN_join_registrar" /     |
+   |              | vformat    |           | "AN_join_registrar_rjp"   |
+   |              | enroll     |           | /                         |
+   |              |            |           | "AN_Proxy"                |
+   |              |            |           | with IPPROTO_UDP          |
+   +--------------+------------+-----------+---------------------------+
+   |              |            | DNS-SD    | "brski-registrar" /       |
+   |              |            |           | "brski-proxy"             |
+   |              |            |           | with UDP                  |
+   +--------------+------------+-----------+---------------------------+
+   |              |            | CORE-LF   | rt=brski.*                |
+   +--------------+------------+-----------+---------------------------+
+   | BRSKI-PLEDGE | mode       | DNS-SD    | "brski-pledge" with TCP   |
+   |              | vformat    |           |                           |
+   |              | enroll     |           |                           |
+   +--------------+------------+-----------+---------------------------+
 
-                    Table 1: BRSKI Variation Contexts
-
-
-
-
-
-
-
-
-
-
-
-
-
+                     Table 1: BRSKI Variation Contexts
 
 
 
@@ -892,68 +1397,87 @@ Internet-Draft               BRSKI-discovery              September 2023
 
 
 
-
-Eckert                    Expires 8 March 2024                 [Page 16]
+Eckert, et al.            Expires 21 April 2024                [Page 25]
 
-Internet-Draft               BRSKI-discovery              September 2023
+Internet-Draft               BRSKI-discovery                October 2023
 
 
-   +=======+=============+=========+=========+=====+========================================+
-   |Context|VariationType|Variation|Reference|Flags|Note(s)                                 |
-   |       |             |Type     |         |     |                                        |
-   |       |             |Choice   |         |     |                                        |
-   +=======+=============+=========+=========+=====+========================================+
-   |BRSKI, |mode         |rrm      |[RFC8995]|Dflt |Registrar Responder Mode                |
-   |cBRSKI |             |         |ThisRFC  |     |the mode specified in [RFC8995]         |
-   +-------+-------------+---------+---------+-----+----------------------------------------+
-   |       |             |prm      |ThisRFC  |     |Pledge Responder Mode                   |
-   |       |             |         |         |     |[I-D.ietf-anima-brski-prm]              |
-   +-------+-------------+---------+---------+-----+----------------------------------------+
-   |BRSKI  |vformat      |cms      |[RFC8368]|Dflt |CMS-signed JSON Voucher                 |
-   |       |             |         |ThisRFC  |     |                                        |
-   +-------+-------------+---------+---------+-----+----------------------------------------+
-   |       |             |cose     |ThisRFC  |     |CBOR with COSE signature                |
-   +-------+-------------+---------+---------+-----+----------------------------------------+
-   |cBRSKI |             |cose     |ThisRFC  |Dflt |CBOR with COSE signature                |
-   |       |             |         |         |     |[I-D.ietf-anima-constrained-voucher]    |
-   +-------+-------------+---------+---------+-----+----------------------------------------+
-   |       |             |cms      |[RFC8368]|     |CMS-signed JSON Voucher                 |
-   |       |             |         |ThisRFC  |     |                                        |
-   +-------+-------------+---------+---------+-----+----------------------------------------+
-   |BRSKI, |             |jose     |ThisRFC  |Dflt*|JOSE-signed JSON, Default when prm is   |
-   |cBRSKI |             |         |         |     |used                                    |
-   |       |             |         |         |     |[I-D.ietf-anima-jws-voucher],           |
-   |       |             |         |         |     |[I-D.ietf-anima-brski-ae]               |
-   +-------+-------------+---------+---------+-----+----------------------------------------+
-   |BRSKI, |enroll       |est      |[RFC8995]|Dflt |Enroll via EST                          |
-   |cBRSKI |             |         |[RFC7030]|     |as specified in [RFC8995]               |
-   +-------+-------------+---------+---------+-----+----------------------------------------+
-   |       |             |cmp      |ThisRFC  |     |Lightweight CMP Profile                 |
-   |       |             |         |         |     |{I-D.ietf-anima-brski-ae}},             |
-   |       |             |         |         |     |[I-D.ietf-lamps-lightweight-cmp-profile]|
-   +-------+-------------+---------+---------+-----+----------------------------------------+
-   |       |             |scep     |ThisRFC  |Rsvd |[RFC8894]                               |
-   +-------+-------------+---------+---------+-----+----------------------------------------+
+   +=======+=========+=========+=========+=====+========================================+
+   |Context|Variation|Variation|Reference|Flags|Note(s)                                 |
+   |       |Type     |Type     |         |     |                                        |
+   |       |         |Choice   |         |     |                                        |
+   +=======+=========+=========+=========+=====+========================================+
+   |BRSKI, |mode     |rrm      |[RFC8995]|Dflt |Registrar Responder Mode                |
+   |cBRSKI |         |         |ThisRFC  |     |the mode specified in [RFC8995]         |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |       |         |prm      |ThisRFC  |     |Pledge Responder Mode                   |
+   |       |         |         |         |     |[I-D.ietf-anima-brski-prm]              |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |BRSKI  |vformat  |cms      |[RFC8368]|Dflt |CMS-signed JSON Voucher                 |
+   |       |         |         |ThisRFC  |     |                                        |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |       |         |cose     |ThisRFC  |     |CBOR with COSE signature                |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |cBRSKI |         |cose     |ThisRFC  |Dflt |CBOR with COSE signature                |
+   |       |         |         |         |     |[I-D.ietf-anima-constrained-voucher]    |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |       |         |cms      |[RFC8368]|     |CMS-signed JSON Voucher                 |
+   |       |         |         |ThisRFC  |     |                                        |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |BRSKI, |         |jose     |ThisRFC  |Dflt*|JOSE-signed JSON, Default when prm is   |
+   |cBRSKI |         |         |         |     |used                                    |
+   |       |         |         |         |     |[I-D.ietf-anima-jws-voucher],           |
+   |       |         |         |         |     |[I-D.ietf-anima-brski-ae]               |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |BRSKI- |mode     |prm      |ThisRFC  |Dflt |Pledge responder Mode                   |
+   |PLEDGE |         |         |         |     |[I-D.ietf-anima-brski-prm]              |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |       |vformat  |jose     |ThisRFC  |Dflt |JOSE-signed JSON, Default when prm is   |
+   |       |         |         |         |     |used                                    |
+   |       |         |         |         |     |[I-D.ietf-anima-jws-voucher],           |
+   |       |         |         |         |     |[I-D.ietf-anima-brski-ae]               |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |       |         |cms      |ThisRFC  |Rsvd |CMS-signed JSON Voucher, not specified. |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |       |         |cose     |ThisRFC  |Rsvd |CBOR with COSE signature, not specified.|
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |BRSKI, |enroll   |est      |[RFC8995]|Dflt |Enroll via EST                          |
+   |cBRSKI,|         |         |[RFC7030]|     |as specified in [RFC8995], extension for|
+   |BRSKI- |         |         |         |     |Section 1 when used in context BRSKI-   |
+   |PLEDGE |         |         |         |     |PLEDGE                                  |
+   +-------+---------+---------+---------+-----+----------------------------------------+
+   |       |         |cmp      |ThisRFC  |     |Lightweight CMP Profile                 |
+   |       |         |         |         |     |{I-D.ietf-anima-brski-ae}},             |
+   |       |         |         |         |     |[I-D.ietf-lamps-lightweight-cmp-profile]|
+   +-------+---------+---------+---------+-----+----------------------------------------+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 26]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+   |       |         |scep     |ThisRFC  |Rsvd |[RFC8894]                               |
+   +-------+---------+---------+---------+-----+----------------------------------------+
 
                    Table 2: BRSKI Variation Type Choices
 
+   Note 1:  The Variation String "EST-TLS" is equivalent to the
+      Variation String "" and is required and only permitted for the
+      AN_join_registrar objective value in GRASP for backward
+      compatiblity with RFC8995, where it is used for this variation.
+      Note that AN_proxy uses "".
+
    +=======+====================================+=========+=========+========================================+
-   |Context|Spec / Applicability                |Variation|Variation|Explanations                            |
+   |Context|Spec / Applicability                |Variation|Variation|Explanations / Notes                    |
    |       |                                    |String   |         |                                        |
    +=======+====================================+=========+=========+========================================+
-   |BRSKI  |[RFC8995]                           |""       |rrm cms  |                                        |
-   |       |                                    |         |est      |                                        |
+   |BRSKI  |[RFC8995]                           |"" /     |rrm cms  |Note 1                                  |
+   |       |                                    |"EST-TLS"|est      |                                        |
    +-------+------------------------------------+---------+---------+----------------------------------------+
    |       |[I-D.ietf-anima-brski-ae]           |cmp      |rrm cms  |                                        |
    |       |                                    |         |cmp      |                                        |
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 17]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
-
    +-------+------------------------------------+---------+---------+----------------------------------------+
    |       |[I-D.ietf-anima-brski-prm]          |prm      |prm jose |                                        |
    |       |                                    |         |est      |                                        |
@@ -982,6 +1506,14 @@ Internet-Draft               BRSKI-discovery              September 2023
    |       |-                                   |prm-cmp  |prm jose |possible variation of                   |
    |       |                                    |         |cmp      |[I-D.ietf-anima-brski-prm] and          |
    |       |                                    |         |         |[I-D.ietf-anima-brski-ae]               |
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 27]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
    +-------+------------------------------------+---------+---------+----------------------------------------+
    |       |-                                   |prm-cose |prm cose |possible variation of                   |
    |       |                                    |         |est      |[I-D.ietf-anima-brski-prm] and          |
@@ -1003,14 +1535,7 @@ Internet-Draft               BRSKI-discovery              September 2023
 
                                   Table 3
 
-
-
-Eckert                    Expires 8 March 2024                 [Page 18]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
-
-4.2.  Service Names Registry
+5.2.  Service Names Registry
 
    IANA is asked to modify and amend the "Service Name and Transport
    Protocol Port Number Registry" registry
@@ -1034,7 +1559,18 @@ Internet-Draft               BRSKI-discovery              September 2023
    TBD: This request likely does not include all the necessary
    formatting.
 
-4.3.  BRSKI Well-Known URIs fixes (opportunistic)
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 28]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+5.3.  BRSKI Well-Known URIs fixes (opportunistic)
 
    The following change requests to "https://www.iana.org/assignments/
    brski-parameters/brski-parameters.xhtml#brski-well-known-uris" are
@@ -1059,22 +1595,55 @@ Internet-Draft               BRSKI-discovery              September 2023
        this discovery document was written.  It is meant to help readers
        map the registry to the terminoloy used in those documents.
 
+6.  Security Considerations
+
+   In Section 1, pledges are easier subject to DoS attacks than in
+   Section 1, because attackers can be initiators and delay or prohibit
+   enrollment of a pledge by opening so many connections to the pledge
+   that a valid registrar-agents connection to the pledge may not be
+   possible.  Discovery of the pledge via DNS-SD increases the ability
+   of attackers to discover pledges againsst which such DoS attacks can
+   be attempted.
+
+   Especially when supporting DNS-SD browsing across unicast DNS,
+   Pledges MUST implement DoS prevention measures, such as limiting the
+   number and rate of accepted TCP connections on a per-initiator basis.
+   If feasile for the implementation, simultaneous connections SHOULD be
+   possible, so that an ongoing attacker connection will not delay a
+   valid registrar-agent connection.  When accepting connections, a
+   strategy such as LRU MAY be used to ensure that an attacker will not
+   be able to monopolize connections.
+
+   Browsing via DNS-SD, especially via unicast DNS which makes
+   information available network-wide does also introduce a perpass
+   attack, gathering intelligence against what type and serial number of
+   devices are installed in the network.  Whether or not this is seen as
 
 
-Eckert                    Expires 8 March 2024                 [Page 19]
+
+Eckert, et al.            Expires 21 April 2024                [Page 29]
 
-Internet-Draft               BRSKI-discovery              September 2023
+Internet-Draft               BRSKI-discovery                October 2023
 
 
-5.  Security Considerations
+   a relevant risk is highly installation dependent.  Networks SHOULD
+   implement filtering measures at mDNS and/or DNS RR/services level to
+   prohibit such data collection if there is a risk, and this is seen as
+   an undesirable attack vector.
+
+7.  Acknowledgments
 
    TBD.
 
-6.  Acknowledgments
+8.  Draft considerations
 
-   TBD.
+8.1.  Open Issues
 
-7.  Changelog
+   Questions to the DNS-SD community, potential review with
+
+   TBD
+
+8.2.  Changelog
 
    [RFC Editor: please remove this section.]
 
@@ -1082,9 +1651,9 @@ Internet-Draft               BRSKI-discovery              September 2023
 
    Initial version.
 
-8.  References
+9.  References
 
-8.1.  Normative References
+9.1.  Normative References
 
    [I-D.ietf-anima-brski-ae]
               von Oheimb, D., Fries, S., and H. Brockhaus, "BRSKI-AE:
@@ -1100,6 +1669,19 @@ Internet-Draft               BRSKI-discovery              September 2023
               10 July 2023, <https://datatracker.ietf.org/doc/html/
               draft-ietf-anima-brski-prm-09>.
 
+
+
+
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 30]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
    [I-D.ietf-anima-constrained-join-proxy]
               Richardson, M., Van der Stok, P., and P. Kampanakis,
               "Constrained Join Proxy for Bootstrapping Protocols", Work
@@ -1107,20 +1689,6 @@ Internet-Draft               BRSKI-discovery              September 2023
               join-proxy-14, 26 April 2023,
               <https://datatracker.ietf.org/doc/html/draft-ietf-anima-
               constrained-join-proxy-14>.
-
-
-
-
-
-
-
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 20]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
 
    [I-D.ietf-anima-constrained-voucher]
               Richardson, M., Van der Stok, P., Kampanakis, P., and E.
@@ -1137,6 +1705,13 @@ Internet-Draft               BRSKI-discovery              September 2023
               2023, <https://datatracker.ietf.org/doc/html/draft-ietf-
               anima-jws-voucher-09>.
 
+   [I-D.ietf-dnssd-srp]
+              Lemon, T. and S. Cheshire, "Service Registration Protocol
+              for DNS-Based Service Discovery", Work in Progress,
+              Internet-Draft, draft-ietf-dnssd-srp-23, 4 August 2023,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-dnssd-
+              srp-23>.
+
    [I-D.ietf-lamps-lightweight-cmp-profile]
               Brockhaus, H., von Oheimb, D., and S. Fries, "Lightweight
               Certificate Management Protocol (CMP) Profile", Work in
@@ -1150,9 +1725,26 @@ Internet-Draft               BRSKI-discovery              September 2023
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/rfc/rfc2119>.
 
+   [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
+              Housley, R., and W. Polk, "Internet X.509 Public Key
+              Infrastructure Certificate and Certificate Revocation List
+              (CRL) Profile", RFC 5280, DOI 10.17487/RFC5280, May 2008,
+              <https://www.rfc-editor.org/rfc/rfc5280>.
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 31]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
    [RFC6690]  Shelby, Z., "Constrained RESTful Environments (CoRE) Link
               Format", RFC 6690, DOI 10.17487/RFC6690, August 2012,
               <https://www.rfc-editor.org/rfc/rfc6690>.
+
+   [RFC6762]  Cheshire, S. and M. Krochmal, "Multicast DNS", RFC 6762,
+              DOI 10.17487/RFC6762, February 2013,
+              <https://www.rfc-editor.org/rfc/rfc6762>.
 
    [RFC6763]  Cheshire, S. and M. Krochmal, "DNS-Based Service
               Discovery", RFC 6763, DOI 10.17487/RFC6763, February 2013,
@@ -1166,17 +1758,6 @@ Internet-Draft               BRSKI-discovery              September 2023
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
-
-
-
-
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 21]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
 
    [RFC8368]  Eckert, T., Ed. and M. Behringer, "Using an Autonomic
               Control Plane for Stable Connectivity of Network
@@ -1199,15 +1780,27 @@ Internet-Draft               BRSKI-discovery              September 2023
               Infrastructure (BRSKI)", RFC 8995, DOI 10.17487/RFC8995,
               May 2021, <https://www.rfc-editor.org/rfc/rfc8995>.
 
-8.2.  Informative References
+9.2.  Informative References
 
    [I-D.eckert-anima-grasp-dnssd]
               Eckert, T. T., Boucadair, M., Jacquenet, C., and M. H.
               Behringer, "DNS-SD Compatible Service Discovery in GeneRic
               Autonomic Signaling Protocol (GRASP)", Work in Progress,
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 32]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
               Internet-Draft, draft-eckert-anima-grasp-dnssd-05, 10 July
               2023, <https://datatracker.ietf.org/doc/html/draft-eckert-
               anima-grasp-dnssd-05>.
+
+   [RFC5988]  Nottingham, M., "Web Linking", RFC 5988,
+              DOI 10.17487/RFC5988, October 2010,
+              <https://www.rfc-editor.org/rfc/rfc5988>.
 
    [RFC7252]  Shelby, Z., Hartke, K., and C. Bormann, "The Constrained
               Application Protocol (CoAP)", RFC 7252,
@@ -1224,15 +1817,6 @@ Appendix A.  Discovery for constrained BRSKI
    Section 1 and Section 1 as of 08/2023, which make both drafts
    incompatible with this document.  It will be removed if/when those
    issues will be fixed.
-
-
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 22]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
 
 A.1.  Current constrained text for GRASP
 
@@ -1252,10 +1836,19 @@ A.1.  Current constrained text for GRASP
    [O_IPv6_LOCATOR,
    h'fda379a6f6ee00000200000064000001', IPPROTO_UDP, 5685]]]
 
-     Figure 2: cBRSKI Fig 5: Example of Registrar announcement message
+     Figure 6: cBRSKI Fig 5: Example of Registrar announcement message
 
    Most Registrars will announce both a JPY-stateless and stateful
    ports, and may also announce an HTTPS/TLS service:
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 33]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
 
    [M_FLOOD, 51840231, h'fda379a6f6ee00000200000064000001', 180000,
    [["AN_join_registrar", 4, 255, ""],
@@ -1268,7 +1861,7 @@ A.1.  Current constrained text for GRASP
     [O_IPv6_LOCATOR,
      h'fda379a6f6ee00000200000064000001', IPPROTO_UDP, 5685]]]
 
-                                  Figure 3
+                                  Figure 7
 
    The following is the current text from Section 1.
 
@@ -1281,21 +1874,12 @@ A.1.  Current constrained text for GRASP
    Here is an example M_FLOOD announcing the Registrar on example port
    5685, which is a port number chosen by the Registrar.
 
-
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 23]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
-
       [M_FLOOD, 51804231, h'fda379a6f6ee00000200000064000001', 180000,
       [["AN_join_registrar", 4, 255, "BRSKI_RJP"],
        [O_IPv6_LOCATOR,
         h'fda379a6f6ee00000200000064000001', IPPROTO_UDP, 5685]]]
 
-            Figure 4: Example of Registrar announcement message
+            Figure 8: Example of Registrar announcement message
 
    Most Registrars will announce both a JPY-stateless and stateful
    ports, and may also announce an HTTPS/TLS service:
@@ -1311,7 +1895,16 @@ Internet-Draft               BRSKI-discovery              September 2023
        [O_IPv6_LOCATOR,
         h'fda379a6f6ee00000200000064000001', IPPROTO_UDP, 5685]]]
 
-           Figure 5: Example of Registrar announcing two services
+           Figure 9: Example of Registrar announcing two services
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 34]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
 
 A.1.1.  Issues and proposed change
 
@@ -1338,15 +1931,7 @@ A.1.1.  Issues and proposed change
     [O_IPv6_LOCATOR,
      h'fda379a6f6ee00000200000064000001', IPPROTO_UDP, 5685]]]
 
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 24]
-
-Internet-Draft               BRSKI-discovery              September 2023
-
-
-           Figure 6: Proposed Encoding of registrar announcements
+          Figure 10: Proposed Encoding of registrar announcements
 
    In summary:
 
@@ -1362,13 +1947,42 @@ Internet-Draft               BRSKI-discovery              September 2023
 
 Contributors
 
+   Thomas Werner
+   Siemens AG
+   Germany
+   Email: thomas-werner@siemens.com
+   URI:   https://www.siemens.com/
+
+
+
+
+
+Eckert, et al.            Expires 21 April 2024                [Page 35]
+
+Internet-Draft               BRSKI-discovery                October 2023
+
+
+   Steffen Fries
+   Siemens AG
+   Germany
+   Email: steffen.fries@siemens.com
+   URI:   https://www.siemens.com/
+
+
+   Hendrik Brockhaus
+   Siemens AG
+   Germany
+   Email: hendrik.brockhaus@siemens.com
+   URI:   https://www.siemens.com/
+
+
    Michael Richardson
    Canada
    Phone: +41 44 878 9200
    Email: mcr+ietf@sandelman.org
 
 
-Author's Address
+Authors' Addresses
 
    Toerless Eckert (editor)
    Futurewei USA
@@ -1376,6 +1990,18 @@ Author's Address
    Email: tte@cs.fau.de
 
 
+   David von Oheimb
+   Siemens AG
+   Otto-Hahn-Ring 6
+   81739 Munich
+   Germany
+   Email: david.von.oheimb@siemens.com
+   URI:   https://www.siemens.com/
+
+
+   Esko Dijk
+   IoTconsultancy.nl
+   Email: esko.dijk@iotconsultancy.nl
 
 
 
@@ -1387,14 +2013,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-Eckert                    Expires 8 March 2024                 [Page 25]
+Eckert, et al.            Expires 21 April 2024                [Page 36]

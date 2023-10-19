@@ -28,15 +28,46 @@ author:
   abbrev: Futurewei
   country: USA
   email: tte@cs.fau.de
+- ins: D. von&nbsp;Oheimb
+  name: David von&nbsp;Oheimb
+  org: Siemens AG
+  abbrev: Siemens
+  street: Otto-Hahn-Ring 6
+  city: Munich
+  code: '81739'
+  country: Germany
+  email: david.von.oheimb@siemens.com
+  uri: https://www.siemens.com/
+- ins: E. Dijk
+  name: Esko Dijk
+  org: IoTconsultancy.nl
+  email: esko.dijk@iotconsultancy.nl
 
 contributor:
-  name: Michael Richardson
+- name: Thomas Werner
+  country: Germany
+  org: Siemens AG
+  email: thomas-werner@siemens.com
+  uri: https://www.siemens.com/
+- name: Steffen Fries
+  country: Germany
+  org: Siemens AG
+  email: steffen.fries@siemens.com
+  uri: https://www.siemens.com/
+- name: Hendrik Brockhaus
+  country: Germany
+  org: Siemens AG
+  email: hendrik.brockhaus@siemens.com
+  uri: https://www.siemens.com/
+- name: Michael Richardson
   country: Canada
   phone: "+41 44 878 9200"
   email: mcr+ietf@sandelman.org
 
 normative:
+  RFC5280:
   RFC6690:
+  RFC6762:
   RFC6763:
   RFC8990:
   RFC8994:
@@ -49,8 +80,10 @@ normative:
   RFC7030:
   RFC8368:
   I-D.ietf-lamps-lightweight-cmp-profile:
+  I-D.ietf-dnssd-srp:
 
 informative:
+  RFC5988:
   RFC7252:
   RFC8894:
   I-D.eckert-anima-grasp-dnssd:
@@ -122,47 +155,49 @@ Variation Type Choice:
 : "An Autonomic Control Plane", {{RFC8994}}. 
 
 {: #BRSKI}BRSKI:
-: "Bootstrapping Remote Secure Key Infrastructure", {{RFC8995}}
+: "Bootstrapping Remote Secure Key Infrastructure", {{RFC8995}}.
 
 {: #BRSKI-AE}BRSKI-AE:
-: "Alternative Enrollment Protocols in {{BRSKI}}", {{I-D.ietf-anima-brski-ae}}
+: "Alternative Enrollment Protocols in {{BRSKI}}", {{I-D.ietf-anima-brski-ae}}.
 
 {: #BRSKI-PRM}BRSKI-PRM:
-: "{{BRSKI}} with Pledge in Responder Mode", {{I-D.ietf-anima-brski-prm}}
+: "{{BRSKI}} with Pledge in Responder Mode", {{I-D.ietf-anima-brski-prm}}.
 
 {: #cBRSKI}cBRSKI:
-: "Constrained Bootstrapping Remote Secure Key Infrastructure ({{BRSKI}})", {{I-D.ietf-anima-constrained-voucher}}
+: "Constrained Bootstrapping Remote Secure Key Infrastructure ({{BRSKI}})", {{I-D.ietf-anima-constrained-voucher}}.
 
 {: #COAP}COAP:
-: "The Constrained Application Protocol (CoAP)", {{RFC7252}}
+: "The Constrained Application Protocol (CoAP)", {{RFC7252}}.
 
 {: #CORE-LF}CORE-LF:
 : "Constrained RESTful Environments (CoRE) Link Format", {{RFC6690}}.
 
 {: #cPROXY}cPROXY:
-: "Constrained Join Proxy for Bootstrapping Protocols", {{I-D.ietf-anima-constrained-join-proxy}}
+: "Constrained Join Proxy for Bootstrapping Protocols", {{I-D.ietf-anima-constrained-join-proxy}}.
 
 {: #DNS-SD}DNS-SD:
 : "DNS-Based Service Discovery", {{RFC6763}}.
 
 {: #EST}EST:
-: "Enrollment over Secure Transport", {{RFC7030}}
+: "Enrollment over Secure Transport", {{RFC7030}}.
 
 {: #GRASP}GRASP:
 : "GeneRic Autonomic Signaling Protocol", {{RFC8990}}.
 
 {: #GRASP-DNSSD}GRASP-DNSSD:
-: "DNS-SD Compatible Service Discovery in GeneRic Autonomic Signaling Protocol (GRASP)", {{I-D.eckert-anima-grasp-dnssd}}
+: "DNS-SD Compatible Service Discovery in GeneRic Autonomic Signaling Protocol (GRASP)", {{I-D.eckert-anima-grasp-dnssd}}.
 
 {: #JWS-VOUCHER}JWS-VOUCHER:
-: "JWS signed Voucher Artifacts for Bootstrapping Protocols", {{I-D.ietf-anima-jws-voucher}}
+: "JWS signed Voucher Artifacts for Bootstrapping Protocols", {{I-D.ietf-anima-jws-voucher}}.
 
 {: #lwCMP}lwCMP:
-: "Lightweight Certificate Management Protocol (CMP) Profile", {{I-D.ietf-lamps-lightweight-cmp-profile}}
+: "Lightweight Certificate Management Protocol (CMP) Profile", {{I-D.ietf-lamps-lightweight-cmp-profile}}.
+
+{: #mDNS}mDNS:
+: "multicast DNS", {{RFC6762}}.
 
 {: #SCEP}SCEP:
-: "Simple Certificate Enrolment Protocol", {{RFC8894}}
-
+: "Simple Certificate Enrolment Protocol", {{RFC8894}}.
 
 # Overview 
 
@@ -265,10 +300,11 @@ vformat (voucher format):
   the choices "cms" as defined in {{BRSKI}}, "cose" as defined in {{cBRSKI}} and "jose" as defined in {{JWS-VOUCHER}}.
 
 enroll:
-: A variation in the URI endpoints used for enrollment of the pledge with keying material (trust anchors and certificate (chain)).
-  This document introduces the choices "est" as introduced by {{BRSKI}} (to indicate the {{EST}} protocol)
-  and "cmp" to indicate the lightweight CMP profile ({{lwCMP}}) introduced by {{BRSKI-AE}}. It also reserved the choice
-  "scep" to indicate {{SCEP}}. This is only a reservation, because no specification for the use of {{SCEP}} with BRSKI exist.
+: A variation in the URI endpoints used for enrollment of the pledge with keying material (trust anchors and certificate (chain)). This document introduces the following :choices
+
+   * "est" as introduced by {{BRSKI}} to indicate the {{EST}} protocol, which is default
+   * "cmp" to indicate the CMP protocol according to the Lightweight CMP profile ({{lwCMP}}). The respective adaptations to BRSKI have been introduced by {{BRSKI-AE}}.
+   * "scep" to indicate {{SCEP}}. This is only a reservation, because no specification for the use of {{SCEP}} with BRSKI exists.
 
 ## Variations
 
@@ -283,7 +319,7 @@ defined parameters for discovery of BRSKI variations.
 
 ### BRSKI Variation Contexts table
 
-This  table ({{fig-contexts}}, defines the BRSKI Variations Contexts.
+This table, {{fig-contexts}}, defines the BRSKI Variations Contexts.
 
 The "Applicable Variation Types" lists the Variation Types from whose choices a Variation for this
 context is formed. The "Service Name(s)" colum lists the discovery mechanisms and their Service Name(s)
@@ -291,7 +327,7 @@ that constitute the context.
 
 ### BRSKI Variation Type Choices table
 
-This table ({{fig-choices}}) defines the Variations Type Choices.
+This table, {{fig-choices}}, defines the Variations Type Choices.
 
 The "Context" column lists the BRSKI Variation Context(s) to which this line applies. If it is empty, then the same
 Context(s) apply as that of the last prior line with a non-empty Context column.
@@ -350,7 +386,7 @@ MUST be listed in the order in which the Variation Types are listed in the Appli
 column of the BRSKI Variation Contexts table. 
 
 The "Variation String" column has the string term used to indicate the variation when using the
-simple encoding of BRSKI Variation Discovery for GRASP as described in {{grasp}}. It is formed by
+simple encoding of BRSKI Variation Discovery for GRASP as described in {{GRASP}}. It is formed by
 concatenating the Choices term from the Variation colum with the "-" character, excluding those
 Choices terms (and "-" concatenator) which are Default for the Context. If this procedure ends
 up with the empty string, then this is indicated as "" in the column.
@@ -455,6 +491,154 @@ for a registrar Service Name. Registrars therefore SHOULD always include the pro
 to the prior paragraph. This only involves additional code on the registrar beyond the service announcement
 in case the Registrar would otherwise not implement circuit mode.
 
+## BRSKI Pledges support for Variations
+
+### BRSKI-PLEDGE context
+
+BRSKI-PLEDGE is the context for discovery of pledges by nodes such as registrar-agents.
+Pledges supporting {{BRSKI-PRM}} MUST support it. It may also be used by other variations of BRSKI
+when supported by pledges.
+
+Pledges supporting BRSKI-PLEDGE MUST support DNS-SD for discovery via mDNS, using link-local scope.
+For DNS-SD discovery beyond link-local scope, pledges SHOULD support DNS-SD via {{I-D.ietf-dnssd-srp}}.
+
+TBD: Is there sufficient autoconfiguration support in {{I-D.ietf-dnssd-srp}}, that pledges without any
+configuration can use it, and if so, do we need to raise specific additional requirements to enable this
+in pledges ?
+
+These DNS-SD requirements are defaults. Specifications for specific deployment contexts such as specific
+type of radio network solutions may need to specify their own requirements overriding or amending these
+requirements. 
+
+Pledges MUST support to be discoverable via their service instance name. They MAY be discoverable
+via DNS-SD browsing, so that registrar-agents can find even unexpected pledges through DNS-SD browsing.
+
+XXX
+
+Support for browsing is required to discover over the network pledges supporting only {{BRSKI-PRM}},
+but not {{BRSKI}} if they have no known serial-number information from which their service instance
+name can be constructed, so it is a crucial feature for robust enrollment.  See {{security-considerations}}
+for more details about discovery and BRSKI-PLEDGE.
+
+When pledges are discoverable vis DNS-SD browsing, they MUST expect that a large number of pledges
+exist in the network at the same time, such as in the order of 100 or more, and schedule their responses
+according to the procedures in {{mDNS}} and {{DNS-SD}} to avoid simultaneous reply from all pledges.
+
+TBD: What is the best section in mDNS/DNS-SD to point to for this timed reply to scale ?
+
+Browsing via DNS-SD for a pledge is circumvented by the pledge not announcing its PTR RR for
+"brski-registrar". Technically, the remaining RR may not constitute full DNS-SD service, but
+they do provide the required discovery for the known service instance name of the pledge.
+
+counter measures such as limiting the number and rate of PRM connects that they accept, ideally 
+on a per-initiator basis (assuming that DDoS attacks are more harder to mount than single
+attacker DoS attacks).
+
+#### Service Instance Name
+
+The servce instance name choosen by a BRSKI pledge MUST be composed from information which is
+
+* Easily known by BRSKI operations, such as the operational personnel or software automation,
+  specifically sales integration,
+* Available to the pledges BRSKI software itself, for example by being encoded in some attribute of the IDevID.
+
+Typically, a customer will know the serial number of a product from sales information, or even
+from barcode/QR-codes on the product itself. If this serial number is used as the service instance
+name to discover a pledge from a registrar-agent, then this may lead to possible duplicate replies
+from two or more pledges having the same serial number, such as in the following cases:
+
+1. A manufacturer has different product lines and re-uses serial-numbers across them.
+2. Two different manufacturer re-use the same serial-numbers.
+
+If pledges enable browsing of their service instance name, they MAY support {{DNS-SD}} specified
+procedures to create unique service instance names when they discover such clashes, by appending
+a space and serial number, starting with 2 to the service instance name: "\<service-instance-name> (2)",
+as described in {{DNS-SD}} Appendix D.
+
+Nevertheless, this approach to resolving conflights is not desirable:
+
+* If browsing of DNS-SD service instance name is not supported, registrar-agents would have to
+  always (and mostly wrongly) guess that there is a clash and (mostly unnecessarily) search
+  for "\<service-instance-name> (2)".
+* If a clash exists between pledges from the same manufacturer, and even if the registrar-agent
+  then attempts to start enrolling all pledges with the same clashing service instance name,
+  it may not have enough information to determine which the correct pledge is. This would happen
+  especially if the IDevId from both devices (of different product type), had the same serial
+  number, and the CA of both was the same (because they come from the same manufacturer).
+  Even if some other IDevID field was used to distinguish their device model, the registrar-agent
+  would not be able to determine that difference without additional vendor specific programming.
+  
+In result:
+
+* Vendors MUST document a scheme how their pledges form a service instance name from
+  information available to the customer of the pledge.
+* These service instance names MUST be unique across all IDevID of the manufacturer that
+  share the same CA.
+
+The following mechanisms are recommended:
+
+* Pledges SHOULD encode manufacturer unique product instance information in their
+  subject name serialNumber. {{RFC5280}} calls this the X520SerialNumber.
+* Pledges SHOULD make this serialNumber information consistent with easily accessible
+  product instance information when in physcial posession of the pledge, such as
+  product type code and serial number on barcode/QR-code to enable {{BRSKI-PRM}} discovery
+  without additional backend sales integration. Note that discovery alone does not
+  allow for enrollment!
+* Pledges SHOULD construct their service instance name by concatenating
+  their X520SerialNumber with a domain name prefix that is used by the manufacturer
+  and thus allows to disambiguate devices from different manufacturer using the
+  same serialNumber scheme, and hence the likelyhood of service instance name clashes.
+
+~~~~
+Service Instance Name:
+  "PID:Model-0815 SN:WLDPC2117A99.example.com"
+
+Manufacturer published Service Instance Name schema:
+ PID:\<PID>\\ SN:\<SN>.example.com
+
+Pledge IDevID certificate information:
+  ; Format as shown by e.g.: openssh
+  Subject: serialNumber = "PID:Model-0815 SN:WLDPC2117A99", O = Example, CN = Model-0815
+
+DNS-SD RR for the pledge:
+  ; PTR RR to support browsing / discovery of service instance name
+  _brski-pledge._tcp.local  IN PTR
+    PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com._brski-pledge._tcp.local
+ 
+  ; SRC and TXT RR for the service instance name
+  PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com._brski-pledge._tcp.local
+    IN SRV 1 1 
+    PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com.local
+  PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com._brski-pledge._tcp.local
+    IN TXT ""
+
+  ; AAAA address resolution for the target host name
+  PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com.local
+    IN AAAA fda3:79a6:f6ee:0000::0200:0000:6400:00a1
+~~~~
+{: #service-name-example title='Example service instance name data'}
+
+In {{service-name-example}}, the manufacturer "example" identifies device instances 
+through a product identifier \<PID> and a serial number \<SN>. Both are printed on labels
+on the product/packaging and/or communicated during purchase of the product.
+
+The service instance name of pledges from this manufacturer are using the
+string "PID:\<PID> SN:\<SN>.example.com". "example.com" is assumed to be a
+domain owned by this manufacturer. \<PID> and \<SN> are replaced by the actual
+strings.
+
+The IDevID encodes the service instance name without the domain ending (".example.com")
+in the X520SerialNumber field. Other fields of the IDevID are not used.
+
+The resulting DNS-SD RRs that the pledge announces are shown in the example.
+" " and "." characters are escaped as recommended by {{DNS-SD}}.
+
+In this example, the same string as constructed for the service instance name
+is also used as the target host name. This is of course not necessary, but
+unless the pledge already obtains a host name through other DNS means,
+re-using the same name allows to avoid coming up with a second method to
+construct a unique name. 
+
 ## Variation signaling and encoding rules for different discovery mechanisms
 
 ### DNS-SD
@@ -462,8 +646,7 @@ in case the Registrar would otherwise not implement circuit mode.
 #### Signaling
 
 The following definitions apply to any instantiation of DNS-SD including DNS-SD via mDNS as defined in
-{{DNS-SD}}, but also via unicast DNS, for example by registering the necessary DNS-SD Resource Records (RR)
-via {{I-D.ietf-dnssd-srp}} (SRP). 
+{{DNS-SD}}, but also via unicast DNS, for example by registering the necessary DNS-SD Resource Records (RR) via {{I-D.ietf-dnssd-srp}} (SRP). 
 
 The requirements in this document do not guarantee interoperability when using DNS-SD, instead, they need to be amended
 with deployment specific specifications / requirements as to which signaling variation, such as mDNS
@@ -478,7 +661,7 @@ mode to support DNS-SD without mDNS ???
 
 #### Encoding
 
-Variation Type Choices defined in the IANA registry {{fid-variations}} are encoded as {{DNS-SD}} Keys with
+Variation Type Choices defined in the IANA registry {{fig-variations}} are encoded as {{DNS-SD}} Keys with
 a value of 1 in the DNS-SD service instances TXT RR.
 This is possible because all Variation Type Choices are required to be unique across all Variation Types. It also allows to shorten
 the encoding from "key=1" to just "key" for every Variation Type Choice, so that the TXT-DATA encoding can be more compact.
@@ -510,18 +693,23 @@ Service Instance Name. In this case, it is RECOMMENDED that the Instance Name in
 such as in the format specified in {{variation}} and used in the Variation String column of the {{fig-variations}} table.
 
 ~~~~
-               _brski-registrar._tcp.local  PTR  IN          0200:0000:7400._brski-registrar._tcp.local
-0200:0000:7400._brski-registrar._tcp.local  SRV  IN 1 2 4555 0200:0000:7400.local
-0200:0000:7400._brski-registrar._tcp.local  TXT  IN "rrm" "prm"
-0200:0000:7400.local                       AAAA  IN fda3:79a6:f6ee:0000::0200:0000:6400:0001
+               _brski-registrar._tcp.local
+               IN PTR  0200:0000:7400._brski-registrar._tcp.local
+0200:0000:7400._brski-registrar._tcp.local
+                IN SRV  1 2 4555 0200:0000:7400.local
+0200:0000:7400._brski-registrar._tcp.local IN TXT  "rrm" "prm"
+0200:0000:7400.local
+                IN AAAA  fda3:79a6:f6ee:0000::0200:0000:6400:0001
 
-               _brski-registrar._udp.local  PTR  IN 0200:0000:7400._brski-registrar._udp.local
-0200:0000:7400._brski-registrar._udp.local  SRV  IN 1 2 5684 0200:0000:7400.local
-0200:0000:7400._brski-registrar._udp.local  TXT  IN ""
+               _brski-registrar._udp.local
+                IN PTR  0200:0000:7400._brski-registrar._udp.local
+0200:0000:7400._brski-registrar._udp.local
+                IN SRV  1 2 5684 0200:0000:7400.local
+0200:0000:7400._brski-registrar._udp.local IN TXT  ""
 ~~~~
 {: #dnssd-example-1 title='DNS-SD for a simple BRSKI and cBRSKI registrar'}
 
-In the above example {{dnssd-example-2}, a registrar supports BRSKI with "rrm" and "prm" modes across the same TCP socket, port 4555.
+In the above example {{dnssd-example-2}}, a registrar supports BRSKI with "rrm" and "prm" modes across the same TCP socket, port 4555.
 It uses "cms" voucher format and "est" enrollment, which are not included in the TXT strings because both are default for
 _bski-registrar._tcp. The registrar also offers cBRSKI with "rrm" mode,  "cose" voucher and "est" enrollment on UDP port 5684,
 the COAP over DTLS default port. The TXT RR for this has only an empty string because "rrm", "cose" and
@@ -538,15 +726,23 @@ In this example, a single Instance Name suffices, because BRSKI and cBRSKI are t
 contexts: they are distinguished by different protocols: TCP vs. UDP.
 
 ~~~~
-                   _brski-registrar._tcp.local  PTR  IN          0200:0000:7400-rrm._brski-registrar._tcp.local
-0200:0000:7400-rrm._brski-registrar._tcp.local  SRV  IN 1 2 4555 0200:0000:7400-rrm.local
-0200:0000:7400-rrm._brski-registrar._tcp.local  TXT  IN ""
-0200:0000:7400-rrm.local                       AAAA  IN fda3:79a6:f6ee:0000::0200:0000:6400:0001
+0123456789012345678901234567890123456789012345678901234567890123456789
+                   _brski-registrar._tcp.local
+               IN PTR  0200:0000:7400-rrm._brski-registrar._tcp.local
+0200:0000:7400-rrm._brski-registrar._tcp.local
+               IN SRV  1 2 4555 0200:0000:7400-rrm.local
+0200:0000:7400-rrm._brski-registrar._tcp.local IN TXT ""
+0200:0000:7400-rrm.local
+               IN AAAA fda3:79a6:f6ee:0000::0200:0000:6400:0001
 
-                   _brski-registrar._tcp.local  PTR  IN          0200:0000:7400-prm._brski-registrar._tcp.local
-0200:0000:7400-prm._brski-registrar._tcp.local  SRV  IN 1 2 4555 0200:0000:7400-prm.local
-0200:0000:7400-prm._brski-registrar._tcp.local  TXT  IN "prm" "cmp"
-0200:0000:7400-prm.local                       AAAA  IN fda3:79a6:f6ee:0000::0200:0000:6400:0001
+                   _brski-registrar._tcp.local
+               IN PTR 0200:0000:7400-prm._brski-registrar._tcp.local
+0200:0000:7400-prm._brski-registrar._tcp.local
+               IN SRV 1 2 4555 0200:0000:7400-prm.local
+0200:0000:7400-prm._brski-registrar._tcp.local
+               IN TXT "prm" "cmp"
+0200:0000:7400-prm.local
+               IN AAAA fda3:79a6:f6ee:0000::0200:0000:6400:0001
 ~~~~
 {: #dnssd-example-2 title='DNS-SD for a BRSKI registrar supporting RRM and PRM'}
 
@@ -563,32 +759,6 @@ strings - as is true for the whole Instance Name.
 Note too, that because both Instances share the same port number 4555 (and hence TCP socket), they both have
 to be provided by the same BRSKI application. If two separate applications where to be started on the
 dame host, one for "rrm", the other for "prm", then they would have separate sockets and hence port numbers.
-
-
----
-Notes from Esko: DNS-SD working group - SRP currently draft in final review.
-some text for discover of local domain or domains... simpler devices = default domain name.
-
-some thread context examples ?
-
-CoAP registration directory - RFC to register. resorce directory
-can unicast or multicast could be multihop multicast...
-
-"/b/rv" -> resource name in COAP is endpoint
-
-our strings -> boolean flags...
-
-
-brski-ae: trying to make inband definition default and point to brski-disovery as "enhanced".
-
-can discovery also include port number ?
-  awkward mechanism "endpoint" = ip-address + port number
-  include complete server and port number..., scheme and port...
-
-annotate resources is possible, e.g.: title, explaining (adds to volume of data).
-
-TBD: deployment - lightweight end-to-end - uses CoAP 
----
 
 ### GRASP {#grasp}
 
@@ -665,7 +835,7 @@ Because this GRASP encoding does not support service instance name, examples suc
 ~~~~
 {: #grasp-example-2 title='GRASP example with two different processes'}
 
-In {{grasp-exampl-2}}, A separate application process supports "prm" and hence
+In {{grasp-example-2}}, A separate application process supports "prm" and hence
 uses a separate socket, with example TCP port 44000. In this case, there is
 no need nor significant benefit to merge all service instance announcements into
 a single GRASP message. Instead, the BRKSI-"rrm"/cBRSKI process would be
@@ -689,6 +859,11 @@ An initiator connects to a previously discovered initiator and uses CORE-LF
 to discover the available service instances and their COAP parameters, such as
 their endpoints and service parameters.
 
+# Updates to existing RFCs
+
+## RFC8995
+
+TBD.
 
 # IANA considerations
 
@@ -727,22 +902,31 @@ Spec / Applicability:
 
 
 
-| Context         | Applicable Variation Types | Service Name(s)|
-|:----------------|:---------------------------|:--------------|
-| BRSKI           | mode<br>vformat<br>enroll  | GRASP:  "AN_join_registrar" / "AN_Proxy" with IPPROTO_TCP<br>DNS-SD: "brski-registrar" / "brski-proxy" with TCP|
-| cBRSKI          | mode<br>vformat<br>enroll  | GRASP: "AN_join_registrar" / "AN_join_registrar_rjp" / "AN_Proxy" with IPPROTO_UDP<br> DNS-SD: "brski-registrar" / "brski-proxy" SD with UDP <br> CORE-LF: rt=brski.*|
+| Context         | Applicable Variation Types | Discovery Mechanism| Service Name(s)|
+|:----------------|:---------------------------|:----------|:--------------|
+| BRSKI           | mode<br>vformat<br>enroll  | GRASP     |  "AN_join_registrar" /<br> "AN_Proxy"<br>with IPPROTO_TCP |
+|                 |                            | DNS-SD    |  "brski-registrar" /<br> "brski-proxy"<br> with TCP|
+| cBRSKI          | mode<br>vformat<br>enroll  | GRASP     | "AN_join_registrar" /<br> "AN_join_registrar_rjp" /<br> "AN_Proxy"<br> with IPPROTO_UDP |
+|                 |                            | DNS-SD    | "brski-registrar" /<br> "brski-proxy"<br> with UDP |
+|                 |                            | CORE-LF   | rt=brski.*|
+| BRSKI-PLEDGE    | mode<br>vformat<br>enroll  | DNS-SD    | "brski-pledge" with TCP |
 {: #fig-contexts title="BRSKI Variation Contexts"}
 
-| Context         | Variation<br>Type | Variation <br>Type Choice | Reference | Flags | Note(s)                                                |
+
+|Context         |Variation Type | Variation <br>Type Choice | Reference | Flags | Note(s)                                                |
 |:----------------|:--------|:----------|:-----------------------|:-----|:---------------------------------------------------------------------|
 | BRSKI, cBRSKI   | mode    | rrm       | {{RFC8995}}<br>ThisRFC   | Dflt | Registrar Responder Mode <br> the mode specified in {{RFC8995}}      |
 |                 |         | prm       | ThisRFC  <br>          |      | Pledge Responder Mode    <br> {{I-D.ietf-anima-brski-prm}}           |
 | BRSKI           | vformat | cms       | {{RFC8368}}<br>ThisRFC   | Dflt | CMS-signed JSON Voucher  <br>                                        |
-|                 |         | cose      | ThisRFC<br>            |      | CBOR with COSE signature <br>                                        |
+|                 |         | cose      | ThisRFC<br>            |      | CBOR with COSE signature<br>                                |
 | cBRSKI          |         | cose      | ThisRFC<br>            | Dflt | CBOR with COSE signature <br> {{I-D.ietf-anima-constrained-voucher}} |
 |                 |         | cms       | {{RFC8368}}<br>ThisRFC   |      | CMS-signed JSON Voucher  <br>                                        |
 | BRSKI, cBRSKI   |         | jose      | ThisRFC<br>            |Dflt* | JOSE-signed JSON, Default when prm is used<br> {{I-D.ietf-anima-jws-voucher}}, {{I-D.ietf-anima-brski-ae}} |
-| BRSKI, cBRSKI   | enroll  | est       | {{RFC8995}}<br>{{RFC7030}} | Dflt | Enroll via EST           <br> as specified in {{RFC8995}}               |
+| BRSKI-PLEDGE    | mode    | prm       | ThisRFC                | Dflt | Pledge responder Mode<br>{{I-D.ietf-anima-brski-prm}} |
+|                 | vformat | jose      | ThisRFC                | Dflt | JOSE-signed JSON, Default when prm is used<br> {{I-D.ietf-anima-jws-voucher}}, {{I-D.ietf-anima-brski-ae}}  |
+|                 |         | cms       | ThisRFC                | Rsvd | CMS-signed JSON Voucher, not specified. |
+|                 |         | cose      | ThisRFC                | Rsvd | CBOR with COSE signature, not specified. |
+| BRSKI, cBRSKI, BRSKI-PLEDGE  | enroll  | est       | {{RFC8995}}<br>{{RFC7030}} | Dflt | Enroll via EST           <br> as specified in {{RFC8995}}, extension for {{BRSKI-PRM}} when used in context BRSKI-PLEDGE |
 |                 |         | cmp       | ThisRFC                |      | Lightweight CMP Profile  <br> {I-D.ietf-anima-brski-ae}}, {{I-D.ietf-lamps-lightweight-cmp-profile}} |
 |                 |         | scep      | ThisRFC                | Rsvd | {{RFC8894}}                                                          |
 {: #fig-choices title="BRSKI Variation Type Choices"}
@@ -794,15 +978,41 @@ The following change requests to "https://www.iana.org/assignments/brski-paramet
 
 3. IANA is asked to include the following "Note" text: The following table contains the assigned BRSKI protocol Endpoint URI suffixes under "/.well-known/brski"." - This note is added to introduce the term "Endpoint" into the registry table as that is the term commonly used (instead of URI) in several of the memos for which this discovery document was written. It is meant to help readers map the registry to the terminoloy used in those documents.
 
-# Security Considerations {#sec-consider}
+# Security Considerations {#security-considerations}
 
-TBD.
+In {{BRSKI-PRM}}, pledges are easier subject to DoS attacks than in {{BRSKI}}, because attackers
+can be initiators and delay or prohibit enrollment of a pledge by opening so many connections to
+the pledge that a valid registrar-agents connection to the pledge may not be possible. Discovery
+of the pledge via DNS-SD increases the ability of attackers to discover pledges againsst which such
+DoS attacks can be attempted.
+
+Especially when supporting DNS-SD browsing across unicast DNS,
+Pledges MUST implement DoS prevention measures, such as limiting the number and rate of accepted TCP
+connections on a per-initiator basis. If feasile for the implementation, simultaneous connections
+SHOULD be possible, so that an ongoing attacker connection will not delay a valid registrar-agent
+connection. When accepting connections, a strategy such as LRU MAY be used to ensure that an attacker
+will not be able to monopolize connections.
+
+Browsing via DNS-SD, especially via unicast DNS which makes information available network-wide does
+also introduce a perpass attack, gathering intelligence against what type and serial number of
+devices are installed in the network. Whether or not this is seen as a relevant risk is highly
+installation dependent. Networks SHOULD implement filtering measures at mDNS and/or DNS RR/services
+level to prohibit such data collection if there is a risk, and this is seen as an undesirable attack
+vector.
 
 # Acknowledgments
 
 TBD.
 
-# Changelog
+# Draft considerations
+
+## Open Issues
+
+Questions to the DNS-SD community, potential review with 
+
+TBD
+
+## Changelog
 
 \[RFC Editor: please remove this section.]
 
@@ -919,4 +1129,3 @@ In summary:
 * Stateless JRP proxy operations is indicated with objective-name "AN_join_registrar_rjp" and IPPROTO_UDP.
   The default for AN_join_registrar/UDP is the use of COAPs and CBOR encoded voucher. For this
   default, the objective-value is "".
-
