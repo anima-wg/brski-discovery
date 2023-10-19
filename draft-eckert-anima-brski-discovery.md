@@ -513,8 +513,6 @@ requirements.
 Pledges MUST support to be discoverable via their service instance name. They MAY be discoverable
 via DNS-SD browsing, so that registrar-agents can find even unexpected pledges through DNS-SD browsing.
 
-XXX
-
 Support for browsing is required to discover over the network pledges supporting only {{BRSKI-PRM}},
 but not {{BRSKI}} if they have no known serial-number information from which their service instance
 name can be constructed, so it is a crucial feature for robust enrollment.  See {{security-considerations}}
@@ -598,7 +596,8 @@ Manufacturer published Service Instance Name schema:
 
 Pledge IDevID certificate information:
   ; Format as shown by e.g.: openssh
-  Subject: serialNumber = "PID:Model-0815 SN:WLDPC2117A99", O = Example, CN = Model-0815
+  Subject: serialNumber = "PID:Model-0815 SN:WLDPC2117A99",
+    O = Example, CN = Model-0815
 
 DNS-SD RR for the pledge:
   ; PTR RR to support browsing / discovery of service instance name

@@ -763,8 +763,6 @@ Internet-Draft               BRSKI-discovery                October 2023
    registrar-agents can find even unexpected pledges through DNS-SD
    browsing.
 
-   XXX
-
    Support for browsing is required to discover over the network pledges
    supporting only Section 1, but not Section 1 if they have no known
    serial-number information from which their service instance name can
@@ -777,6 +775,8 @@ Internet-Draft               BRSKI-discovery                October 2023
    according to the procedures in Section 1 and Section 1 to avoid
    simultaneous reply from all pledges.
 
+   TBD: What is the best section in mDNS/DNS-SD to point to for this
+   timed reply to scale ?
 
 
 
@@ -785,9 +785,6 @@ Eckert, et al.            Expires 21 April 2024                [Page 14]
 
 Internet-Draft               BRSKI-discovery                October 2023
 
-
-   TBD: What is the best section in mDNS/DNS-SD to point to for this
-   timed reply to scale ?
 
    Browsing via DNS-SD for a pledge is circumvented by the pledge not
    announcing its PTR RR for "brski-registrar".  Technically, the
@@ -831,7 +828,10 @@ Internet-Draft               BRSKI-discovery                October 2023
 
    Nevertheless, this approach to resolving conflights is not desirable:
 
-
+   *  If browsing of DNS-SD service instance name is not supported,
+      registrar-agents would have to always (and mostly wrongly) guess
+      that there is a clash and (mostly unnecessarily) search for
+      "<service-instance-name> (2)".
 
 
 
@@ -841,11 +841,6 @@ Eckert, et al.            Expires 21 April 2024                [Page 15]
 
 Internet-Draft               BRSKI-discovery                October 2023
 
-
-   *  If browsing of DNS-SD service instance name is not supported,
-      registrar-agents would have to always (and mostly wrongly) guess
-      that there is a clash and (mostly unnecessarily) search for
-      "<service-instance-name> (2)".
 
    *  If a clash exists between pledges from the same manufacturer, and
       even if the registrar-agent then attempts to start enrolling all
@@ -893,6 +888,11 @@ Internet-Draft               BRSKI-discovery                October 2023
 
 
 
+
+
+
+
+
 Eckert, et al.            Expires 21 April 2024                [Page 16]
 
 Internet-Draft               BRSKI-discovery                October 2023
@@ -906,7 +906,8 @@ Manufacturer published Service Instance Name schema:
 
 Pledge IDevID certificate information:
   ; Format as shown by e.g.: openssh
-  Subject: serialNumber = "PID:Model-0815 SN:WLDPC2117A99", O = Example, CN = Model-0815
+  Subject: serialNumber = "PID:Model-0815 SN:WLDPC2117A99",
+    O = Example, CN = Model-0815
 
 DNS-SD RR for the pledge:
   ; PTR RR to support browsing / discovery of service instance name
@@ -943,7 +944,6 @@ DNS-SD RR for the pledge:
    The resulting DNS-SD RRs that the pledge announces are shown in the
    example. " " and "." characters are escaped as recommended by
    Section 1.
-
 
 
 
