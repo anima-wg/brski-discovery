@@ -6,3 +6,7 @@ html: xml
 
 xml:
 	kdrfc -3 ${DRAFT}.md
+
+submit: ${DRAFT}.xml
+	curl -S -F "user=tte@cs.fau.de" -F "xml=@${DRAFT}.xml" https://datatracker.ietf.org/api/submission | jq
+
