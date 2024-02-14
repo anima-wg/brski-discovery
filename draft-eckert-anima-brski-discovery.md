@@ -61,7 +61,6 @@ contributor:
   uri: https://www.siemens.com/
 - name: Michael Richardson
   country: Canada
-  phone: "+41 44 878 9200"
   email: mcr+ietf@sandelman.org
 
 normative:
