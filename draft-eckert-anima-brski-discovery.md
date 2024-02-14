@@ -120,7 +120,7 @@ Responder:
 : A host that is using an IP transport protocol to respond to transaction or connection requests from an Initiator.
 
 Responder socket:
-: A socket consisting of a responders IP or IPv6 address, protocol and protocol port 
+: A socket consisting of a responders IP or IPv6 address, protocol and protocol port
   number on which it responds to requests of the protocol (typically UDP or TCP).
 
 Role:
@@ -135,23 +135,23 @@ Service Name:
 Type:
 : See Variation Type.
 
-Variation: 
+Variation:
 : A combination one one variation choice each for every variation type applicable to the variation context of one discoverable BRSKI communications.
   For example, in the context of BRSKI, a variation is one choice for "mode", one choice for "enroll" and once choice for "vformat".
 
 Variation Context:
 : A set of Services for whom the same set of variations applies
 
-Variation Type: 
-: The name for one aspect of a protocol for which two or more choices exist (or may exist in the future), and where the choice 
+Variation Type:
+: The name for one aspect of a protocol for which two or more choices exist (or may exist in the future), and where the choice
   can technically be combined orthogonal to other variation types. This document defined the BRSKI variation types "mode", "enroll" and "vformat".
 
-Variation Type Choice: 
+Variation Type Choice:
 : The name for different values that a particular variation type may have.
-  For example, this document does defines the choices "rrm" and "prm" for the BRSKI variation "mode". 
+  For example, this document does defines the choices "rrm" and "prm" for the BRSKI variation "mode".
 
 {: #ACP}ACP:
-: "An Autonomic Control Plane", {{RFC8994}}. 
+: "An Autonomic Control Plane", {{RFC8994}}.
 
 {: #BRSKI}BRSKI:
 : "Bootstrapping Remote Secure Key Infrastructure", {{RFC8995}}.
@@ -198,7 +198,7 @@ Variation Type Choice:
 {: #SCEP}SCEP:
 : "Simple Certificate Enrolment Protocol", {{RFC8894}}.
 
-# Overview 
+# Overview
 
 The mechanisms described in this document are intended to help solve the following challenges.
 
@@ -220,7 +220,7 @@ In the presence of different discovery mechanisms, such as {{DNS-SD}}, {{GRASP}}
 {{CORE-LF}} or others, the details of how to apply each of these mechanisms are usually
 specified individually for each mechanism, easily resulting in inconsistencies. Deriving
 as much as possible the details of discovery from a common specification and registries
-can reduce such inconsistencies and easy introduction of additional discovery mechanisms. 
+can reduce such inconsistencies and easy introduction of additional discovery mechanisms.
 
 Generalization of principles related to discovery and operation of proxies.
 
@@ -238,7 +238,7 @@ connection for a particular BRSKI protocol role, such as a pledge, discovers one
 as registrar. The initiator uses some discovery mechanism such as {{DNS-SD}}, {{GRASP}} or {{CORE-LF}}. In the
 the initiator looks for a particular combination of a Service Name and an IP-protocol, and in return learns
 about responder sockets from one or more responders that use this IP-protocol and serve the requested Service Name
-type service across it. It also learns the BRSKI variation(s) supported on the socket. 
+type service across it. It also learns the BRSKI variation(s) supported on the socket.
 
 Service Name is the name of the protocol element used in {{DNS-SD}}, unless explicitly specified, it is used
 as a placeholder for the equivalent protocol elements in other discovery mechanisms. In {{GRASP}}, it is called
@@ -262,7 +262,7 @@ BRSKI context:
   TCP and hence (by default) TLS (version 1.2 or higher according to {{BRSKI}}).
 
 cBRSKI context (constrained BRSKI):
-: context for discovery of BRSKI registrar and proxy variations by proxies, pledges 
+: context for discovery of BRSKI registrar and proxy variations by proxies, pledges
   via the Service Names defined for {{DNS-SD}}, {{GRASP}} and {{CORE-LF}} via UDP, and hence (by default) secure COAP.
 
 Note that the Service Names for cBRSKI include the same {{DNS-SD}} Service Names as for the BRSKI context,
@@ -361,7 +361,7 @@ this subset of Discovery options can then forego indication of the "Dflt*" Varia
 The "Rsvd" Flag specifies a Variation Type Choice for which no complete specification exist on how to use it
 within BRSKI (or more specifically the context), but which is known to be of potential interest. "Rsvd"
 Variation Type Choices MUST NOT be considered for the  Discoverable Variations table. They are documented
-primarily to reserve the Variation Type Choice term. 
+primarily to reserve the Variation Type Choice term.
 
 The Note(s) section expands the Variation Type Choice terms and provides additional beneficial specification
 references beyond the "Reference" column.
@@ -382,7 +382,7 @@ to the relevant documents and as necessary additional explanation.
 
 The "Variation" column lists the Variation Type Choices that form the Variation. The Variation Type Choices
 MUST be listed in the order in which the Variation Types are listed in the Applicable Variation Types
-column of the BRSKI Variation Contexts table. 
+column of the BRSKI Variation Contexts table.
 
 The "Variation String" column has the string term used to indicate the variation when using the
 simple encoding of BRSKI Variation Discovery for GRASP as described in {{GRASP}}. It is formed by
@@ -409,15 +409,15 @@ Reservation of additional Variation Type Choices requires (only) expert review.
 Additional Contexts MUST be added at the end of the BRSKI Variation Contexts table.
 
 Additional Variation Types MUST be added at the end of the Applicable Variation Types column of the
-BRSKI Variation Contexts table and at the end of existing lines for the Context in the 
-BRSKI Variation Type Choices. Additional Variation Types MUST be introduced with a Default (Dflt) 
+BRSKI Variation Contexts table and at the end of existing lines for the Context in the
+BRSKI Variation Type Choices. Additional Variation Types MUST be introduced with a Default (Dflt)
 Variation Type Choice. These rules ensures that the rule to create the Variation String for GRASP
 (and as desired by other discovery mechanism), and it also enables to add new Variation Type and Choices
 without changing pre-existing Variation Strings: Any Variations String implicitly include the Default Choice for
 any future Variation Types.
 
 When a new Variation Type is added, their Default Choice SHOULD be added to the Variation Column of existing
-applicable lines in the BRSKI Discoverable Variations table. Variations that include new non-Default 
+applicable lines in the BRSKI Discoverable Variations table. Variations that include new non-Default
 Variation Type Choices SHOULD be added at the end of the existing lines for the Context.
 
 ## BRSKI Join Proxies support for Variations
@@ -467,10 +467,10 @@ which they have the same set of registrar sockets supporting those Variations. T
 of the discovery messages to initiators and can save socket resources on the join proxy.
 
 Join proxies MAY create multiple sockets in support of other discovery options, even for the same Variation(s).
-For example, if {{DNS-SD}} is used by two registrars, both announcing the same priority but different weights, then 
+For example, if {{DNS-SD}} is used by two registrars, both announcing the same priority but different weights, then
 the join proxy may create a separate socket for each of these registrars - and their variations, so that the join proxy can equally announce the same
 priority and weight for both sockets to initiators. This allows to maintain the desired weights of use of registrars,
-even when the join proxy operates in stateless mode, in which it can not select a separate registrar for every 
+even when the join proxy operates in stateless mode, in which it can not select a separate registrar for every
 client initiating a connection.
 
 ### Co-location of Proxy and Registrar {#colo}
@@ -507,7 +507,7 @@ in pledges ?
 
 These DNS-SD requirements are defaults. Specifications for specific deployment contexts such as specific
 type of radio network solutions may need to specify their own requirements overriding or amending these
-requirements. 
+requirements.
 
 Pledges MUST support to be discoverable via their service instance name. They MAY be discoverable
 via DNS-SD browsing, so that registrar-agents can find even unexpected pledges through DNS-SD browsing.
@@ -527,7 +527,7 @@ Browsing via DNS-SD for a pledge is circumvented by the pledge not announcing it
 "brski-registrar". Technically, the remaining RR may not constitute full DNS-SD service, but
 they do provide the required discovery for the known service instance name of the pledge.
 
-counter measures such as limiting the number and rate of PRM connects that they accept, ideally 
+counter measures such as limiting the number and rate of PRM connects that they accept, ideally
 on a per-initiator basis (assuming that DDoS attacks are more harder to mount than single
 attacker DoS attacks).
 
@@ -564,7 +564,7 @@ Nevertheless, this approach to resolving conflicts is not desirable:
   number, and the CA of both was the same (because they come from the same manufacturer).
   Even if some other IDevID field was used to distinguish their device model, the registrar-agent
   would not be able to determine that difference without additional vendor specific programming.
-  
+
 In result:
 
 * Vendors MUST document a scheme how their pledges form a service instance name from
@@ -602,10 +602,10 @@ DNS-SD RR for the pledge:
   ; PTR RR to support browsing / discovery of service instance name
   _brski-pledge._tcp.local  IN PTR
     PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com._brski-pledge._tcp.local
- 
+
   ; SRC and TXT RR for the service instance name
   PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com._brski-pledge._tcp.local
-    IN SRV 1 1 
+    IN SRV 1 1
     PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com.local
   PID:Model-0815\\ SN:WLDPC2117A99\\.example\\.com._brski-pledge._tcp.local
     IN TXT ""
@@ -616,7 +616,7 @@ DNS-SD RR for the pledge:
 ~~~~
 {: #service-name-example title='Example service instance name data'}
 
-In {{service-name-example}}, the manufacturer "example" identifies device instances 
+In {{service-name-example}}, the manufacturer "example" identifies device instances
 through a product identifier \<PID> and a serial number \<SN>. Both are printed on labels
 on the product/packaging and/or communicated during purchase of the product.
 
@@ -635,7 +635,7 @@ In this example, the same string as constructed for the service instance name
 is also used as the target host name. This is of course not necessary, but
 unless the pledge already obtains a host name through other DNS means,
 re-using the same name allows to avoid coming up with a second method to
-construct a unique name. 
+construct a unique name.
 
 ## Variation signaling and encoding rules for different discovery mechanisms
 
@@ -644,7 +644,7 @@ construct a unique name.
 #### Signaling
 
 The following definitions apply to any instantiation of DNS-SD including DNS-SD via mDNS as defined in
-{{DNS-SD}}, but also via unicast DNS, for example by registering the necessary DNS-SD Resource Records (RR) via {{I-D.ietf-dnssd-srp}} (SRP). 
+{{DNS-SD}}, but also via unicast DNS, for example by registering the necessary DNS-SD Resource Records (RR) via {{I-D.ietf-dnssd-srp}} (SRP).
 
 The requirements in this document do not guarantee interoperability when using DNS-SD, instead, they need to be amended
 with deployment specific specifications / requirements as to which signaling variation, such as mDNS
@@ -652,7 +652,7 @@ or unicast DNS with SRP is to be supported between initiator and responder. When
 (with SRP), additional mechanisms are required to learn the IP / IPv6 address(es) of feasible DNS and
 SRP servers, and deployment may also need agreements for the (default) domain they want to use in
 unicast DNS. Hence, a mandatory to implement (MTI) profile is not feasible because of the wide range
-of variations to deploy DNS-SD. 
+of variations to deploy DNS-SD.
 
 TBD: We could say that mDNS MUST be supported, unless the network context defines an interoperable
 mode to support DNS-SD without mDNS ???
@@ -752,7 +752,7 @@ but (only) with "cmp" enrollment protocol. Because the registrar does not offer 
 Instance Names have to be created, and with them the necessary (duplicate) RR.
 
 Note that the "-rrm" and "-prm" in the Instance Names are only explanatory and could be any mutually unique
-strings - as is true for the whole Instance Name. 
+strings - as is true for the whole Instance Name.
 
 Note too, that because both Instances share the same port number 4555 (and hence TCP socket), they both have
 to be provided by the same BRSKI application. If two separate applications where to be started on the
@@ -776,7 +776,7 @@ of registrars by proxies.
 
 #### Encoding
 
-To announce protocol variations with {{GRASP}}, the supported Variation is indicated in the 
+To announce protocol variations with {{GRASP}}, the supported Variation is indicated in the
 objective-value field of the GRASP objective, using the method of forming the Variation string term
 in {{variation}}, and listed in the Variation String column of the {{fig-variations}} table.
 
@@ -1006,7 +1006,7 @@ TBD.
 
 ## Open Issues
 
-Questions to the DNS-SD community, potential review with 
+Questions to the DNS-SD community, potential review with
 
 TBD
 
