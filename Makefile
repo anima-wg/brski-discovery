@@ -1,10 +1,10 @@
 DRAFT:=draft-ietf-anima-brski-discovery
 
-html: xml
+html: ${DRAFT}.xml
 	xml2rfc --v2v3 ${DRAFT}.xml && mv ${DRAFT}.v2v3.xml ${DRAFT}.xml
 	xml2rfc ${DRAFT}.xml --html
 
-xml:
+${DRAFT}.xml xml:
 	kdrfc -3 ${DRAFT}.md
 
 submit: ${DRAFT}.xml
