@@ -4,7 +4,7 @@ html: ${DRAFT}.xml
 	xml2rfc --v2v3 ${DRAFT}.xml && mv ${DRAFT}.v2v3.xml ${DRAFT}.xml
 	xml2rfc ${DRAFT}.xml --html
 
-${DRAFT}.xml xml:
+${DRAFT}.xml xml: ${DRAFT}.md
 	kdrfc -3 ${DRAFT}.md
 
 submit: ${DRAFT}.xml
