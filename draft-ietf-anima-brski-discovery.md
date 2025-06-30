@@ -3,7 +3,7 @@ coding: utf-8
 
 title: 'Discovery for BRSKI variations'
 abbrev: BRSKI-discovery
-docname: draft-ietf-anima-brski-discovery-06
+docname: draft-ietf-anima-brski-discovery-04
 stand_alone: true
 ipr: trust200902
 submissionType: IETF
@@ -700,7 +700,7 @@ such as in the format specified in {{variation}} and used in the Variation Strin
                IN PTR  0200:0000:7400._brski-registrar._tcp.local
 0200:0000:7400._brski-registrar._tcp.local
                 IN SRV  1 2 4555 0200:0000:7400.local
-0200:0000:7400._brski-registrar._tcp.local IN TXT  "rrm" "prm"
+0200:0000:7400._brski-registrar._tcp.local IN TXT  "EST-TLS" "prm-jose" "cmp"
 0200:0000:7400.local
                 IN AAAA  fda3:79a6:f6ee:0000::0200:0000:6400:0001
 
@@ -708,7 +708,7 @@ such as in the format specified in {{variation}} and used in the Variation Strin
                 IN PTR  0200:0000:7400._brski-registrar._udp.local
 0200:0000:7400._brski-registrar._udp.local
                 IN SRV  1 2 5684 0200:0000:7400.local
-0200:0000:7400._brski-registrar._udp.local IN TXT  ""
+0200:0000:7400._brski-registrar._udp.local IN TXT  "rrm-cose"
 ~~~~
 {: #dnssd-example-1 title='DNS-SD for a simple BRSKI and cBRSKI registrar'}
 
@@ -817,8 +817,6 @@ Target name of the DNS-SD SRV RR. DNS-SD requires them because its encoding is
 decomposed into different RR, but it also intentionally introduces the Service Instance Name
 as an element for human interaction with selection (browsing and/or diagnostics of selection),
 something that the current GRASP objective-value encoding does not support.
-
-Because this GRASP encoding does not support service instance name, examples such as
 
 ~~~~
 [M_FLOOD, 12340815, h'fe800000000000000000000000000001', 180000,
@@ -1174,14 +1172,15 @@ Spec / Applicability:
   An "NA" indicates that the combination is assumed to be not working with the currently available specifications.
 
 
-| Context         | Applicable Variation Types | Discovery Mechanism| Service Name(s)|
-|:----------------|:---------------------------|:----------|:--------------|
-| BRSKI           | mode<br>vformat<br>enroll  | GRASP     |  "AN_join_registrar" /<br> "AN_Proxy"<br>with IPPROTO_TCP |
-|                 |                            | DNS-SD    |  "brski-registrar" /<br> "brski-proxy"<br> with TCP|
-| cBRSKI          | mode<br>vformat<br>enroll  | GRASP     | "AN_join_registrar" /<br> "AN_join_registrar_rjp" /<br> "AN_Proxy"<br> with IPPROTO_UDP |
-|                 |                            | DNS-SD    | "brski-registrar" /<br> "brski-proxy"<br> with UDP |
-|                 |                            | CORE-LF   | rt=brski.*|
-| BRSKI-PLEDGE    | mode<br>vformat<br>enroll  | DNS-SD    | "brski-pledge" with TCP |
+| Context         | Applicable Variation Types | Discovery Mechanism| Service Name(s) / Transport                                                     | Reference(s)|
+|:----------------|:---------------------------|:----------|:-----------------------------------------------------------------------------------------|:------------|
+| BRSKI           | mode<br>vformat<br>enroll  | GRASP     | "AN_join_registrar" /<br> "AN_Proxy"<br>with IPPROTO_TCP                                 | {{RFC8995}} |
+|                 |                            | DNS-SD    | "brski-registrar" /<br> "brski-proxy"<br> with TCP                                       | {{RFC8995}} |
+| cBRSKI          | mode<br>vformat<br>enroll  | CORE-LF   | rt=brski.jp with coaps                                        | {{I-D.ietf-anima-constrained-voucher}} |
+|                 |                            |           | rt=brski.rs /<br> rt=brski.rjpy with coaps               | {{I-D.ietf-anima-constrained-join-proxy}}   |
+|                 |                            | DNS-SD    | "brski-proxy"<br> /<br> "brski-registrar" /<br> "brski-registrar-rpy" with UDP           | \[THIS-RFC] |
+|                 |                            | GRASP     | "AN_join_registrar" /<br> "AN_join_registrar_rjp" /<br> "AN_Proxy"<br> with IPPROTO_UDP  | \[THIS-RFC] |
+| BRSKI-PLEDGE    | mode<br>vformat<br>enroll  | DNS-SD    | "brski-pledge" with TCP                                                                  | \[THIS-RFC] |
 {: #fig-contexts title="BRSKI Variation Contexts"}
 
 
@@ -1201,19 +1200,21 @@ Spec / Applicability:
 | BRSKI, cBRSKI, BRSKI-PLEDGE  | enroll  | est       | {{RFC8995}}<br>{{RFC7030}} | Dflt | Enroll via EST           <br> as specified in {{RFC8995}}, extension for {{BRSKI-PRM}} when used in context BRSKI-PLEDGE<br}{{RFC9148}} when used over COAP |
 |                 |         | cmp       | ThisRFC                |      | Lightweight CMP Profile  <br> {I-D.ietf-anima-brski-ae}}, {{I-D.ietf-lamps-lightweight-cmp-profile}} |
 |                 |         | scep      | ThisRFC                | Rsvd | {{RFC8894}}                                                          |
-{: #fig-choices title="BRSKI Variation Type Choices"}
-
-Note 1:
-: The Variation String "EST-TLS" is equivalent to the Variation String "" and is required and only permitted for the AN_join_registrar objective value in GRASP for backward compatibility with RFC8995, where it is used for this variation. Note that AN_proxy uses "".
+{: #fig-choices title="BRSKI Variation Type and Choices"}
 
 |Context  |Reference                              |Variation String |Variations    | Explanations / Notes|
 |:--------|:--------------------------------------|:----------------|:-------------|:--------------------|
-| BRSKI   |[RFC8995]                              | "" / "EST-TLS"  | rrm cms  est | Note 1              |
+| BRSKI   |{{RFC8995}}                            | "" / "EST-TLS"  | rrm cms  est | Note 1              |
 |         |{{I-D.ietf-anima-brski-ae}}            | cmp             | rrm cms  cmp |                     |
 |         |{{I-D.ietf-anima-brski-prm}}           | prm-jose        | prm jose est |                     |
 |         |                                       |                 |              |                     |
 | cBRSKI  |{{I-D.ietf-anima-constrained-voucher}} | "" / "rrm-cose" | rrm cose est |                     |
-{: #fig-variations ="BRSKI Discoverable, well specified Variations"}
+
+{: #fig-variations ="BRSKI Variation Strings"}
+
+Note 1:
+: The Variation String "EST-TLS" is equivalent to the Variation String "" and is required and only permitted for the AN_join_registrar objective value in GRASP for backward compatibility with RFC8995, where it is used for this variation. Note that AN_proxy uses "".
+
 
 ## Service Names Registry
 
