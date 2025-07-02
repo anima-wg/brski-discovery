@@ -1,0 +1,335 @@
+From: Toerless Eckert <tte@cs.fau.de>
+To: "Fries, Steffen" <steffen.fries@siemens.com>
+Cc: "anima@ietf.org" <anima@ietf.org>
+Bcc: 
+Subject: Re: [Anima] draft-ietf-anima-brski-discovery feedback/review
+Reply-To: 
+In-Reply-To: <DB9PR10MB6354DED2AB618EC5AD3C53BDF3D32@DB9PR10MB6354.EURPRD10.PROD.OUTLOOK.COM>
+
+On Thu, Mar 13, 2025 at 06:43:43PM +0000, Fries, Steffen wrote:
+> Hi Toerless, hi Esko,
+> 
+> Sorry for providing the feedback after the IETF deadline but I did not manage it earlier.
+> 
+> I reviewed BRSKI discovery and variations (draft-ietf-anima-brski-discovery-05)
+> https://datatracker.ietf.org/doc/draft-ietf-anima-brski-discovery/05/
+> 
+> First of all, I think it was a good move to collect the different discovery
+> mechanisms in one document avoiding that each BRSKI variation defines an own
+> and to ensure consistency over the different discovery mechanisms.
+> What would be good is to see the functionality implemented at least for some of the
+> discovery mechanisms to verify the overall approach. Based on the experiences of the
+> BRSKI implementation, several issues become obvious during implementation.
+> 
+> The following is a list of comments regarding points I stumbled upon. They are
+> of different nature (nits, comments, thoughts).
+> I provided some proposals using OLD/NEW.
+> 
+> General:
+> - Throughout the document often the term  "IP or IPv6" is used
+>   Proposal to state "IPv4 or IPv6"
+
+I've added terminology explanation for IP, IPv4 and IPv6 and fixed up all occurrances
+of IP, IPv4 and IPv6 to be consistent. This document now uses the "modern"
+interpretation of IP, which is IPv4 or (inclusively) IPv6. Older RFCs used IP to mean
+IPv4. I talked with ADs, they say both approaches are still valid, document just
+needs to explain which semantics it uses.
+
+> - The document uses the term "roles" to describe the different BRSKI components
+>   or BRSKI services. I double checked RFC 8995 and it also uses both terms.
+>   For the sake of simplicity I would propose to use just one term for
+>   description and stick to "BRSKI services".
+
+I rewrote that section, but i am keeping role, but i am now better differentiating
+it from service. Pls. check. Hopefully it makes more sense now.
+
+> - "Section 1" is referenced in several places, which should be double checked.
+>   It seems it sometimes rather refers to "BRSKI [RFC 8995]", but in some locations
+>   like 2.1.2 it likely refers to different references
+
+Yeah, what a clusterF..K. I was trying to create references to definitions
+of abbreviations in the terminology section and that totally does not work,
+so i reverted to just references to the bibliography section. Problem should now be gone.
+
+> - Instead of the term "root CA certificate" we may use "trust anchor"
+
+changed.
+
+> - Update of references:
+>   - OLD I-D.ietf-lamps-lightweight-cmp-profile, NEW RFC 9483
+>   - OLD I-D.ietf-anima-brski-ae, NEW RFC 9733]
+
+changed.
+> 
+> - OLD "F0r", NEW "For"
+
+ack.
+> 
+> Section 2.1.3
+> - Just as a thought: The statement regarding BRSKI proxies may not apply in
+>   BRSKI-PRM to the discovery of pledges by the Registrar-agent. This discovery
+>   would  not involve BRSKI Join proxies as of BRSKI-PRM. For the connection
+>   between the registrar-Agent and the Registrar it applies.
+
+Ack.
+
+i now say "pledge or registrar-agent"...
+
+But i also rewrote whole of 2.1.3 because the sentences where confusing on second read.
+(beyond what you asked for, but hopefully helpfull).
+
+> - Proposal to refer to the "BRSKI proxy" rather as "Join proxy" or "BRSKI Join
+>   proxy" as defined in RFC 8995. If the functionality goes beyond the join proxy,
+>   we should define the term
+
+Now always soing BRSKI Join Proxy.
+
+Still no idea why it's capitalized "Join Proxy" and lowercase "pledge" in RFC8995.
+
+> Section 2.2
+> - OLD
+>    Defining these via registry tables
+>    maximizes consistency across discovery mechanisms and makes support
+>    for variations across different discovery mechanisms easier and
+>    consistent.
+>   NEW
+>    Defining these via registry tables
+>    maximizes consistency across discovery mechanisms and eases support
+>    of variations across different discovery mechanisms.
+
+Fixed.
+
+> Section 3.1.3
+> - OLD "BRKSI", NEW "BRSKI"
+
+Fixed
+
+> Section 3.1.5
+> - The variations for vformat only relate to the "outer" format. With the current
+>   approaches in BRSKI, BRSKI-PRM and cBRSKI this is consistent as they do not
+>   provide further variations of inner/outer format. In BRSKI CMS is used as a
+>   wrapper for JSON. If some draft in the future utilizes a different format
+>   wrapped with CMS, the variation type "cms" is no longer unique. One approach
+>   may be to name it "cms-json" instead.
+
+No, can not use "-" inside a name because we concatenate variations with "-" to form
+variation strings.
+
+I have replaced all instances of "cms" with "cmsj".
+
+> - Regarding the variation type "enroll", BRSKI-PRM defines 2 new endpoints at
+>   the registrar to allow for provisioning of wrapped enrollment information
+>   (requestenroll, wrappedcacerts). As these are defined in addition to the EST
+>   endpoints, it might be necessary to have either something like a PRM-flavored
+>   EST or to be able to conclude that a combination of prm and est in the
+>   variation string relates to an enhanced EST capability.
+
+I've added the following text at the end of 3.1.6:
+
+Just because a variation name is composed from variation type choices does not mean that
+an unspecified variation of (random) variation type choices can work without new implementation
+or specification. Or even make sense. This may be the case, or it may not. This is also the reason
+why this document specifies a registry that explicitly enumerates all variations that are
+known to have sufficient specification and will work.
+
+For example, {{BRSKI-PRM}} is indicated through the variation type value "prm", but it may also requires
+enhancements to the enrolment protocol used, which is specified in the variation type "enroll", such as 
+new endpoints in that protocol.  The required functional semantic implied by the "enroll" variation type 
+value in variations with "prm" is thus a different one than in variations not using "prm". And
+{{BRSKI-PRM}} does not necessarily sufficiently specify these enhancements for enrollment protocols 
+that may not have been known or specified by the time {{BRSKI-PRM}} was written.
+
+In other words: No, we are fine. "est" does not mean the same thing/spec independent of the
+other variation type values. 
+
+> Section 3.1.7
+> - OLD "agents", NEW "Registrar-agents"
+
+Fixed all instances to Registrar-Agent(s). PRM draft also still has some capitalization issues.
+
+PRM question: why is there a "-" in these Registrar-Agents, when there is none in Join Proxies...
+
+> Section 3.2
+> - Relevant initiators (of discovery) are stated as pledges and proxies.
+>   Does proxy relate to the "BRSKI Join proxy" here?
+
+I've changed all applicable instances of proxy not with Join Proxy. I don't think we need
+to prepend BRSKI to the term because RFC8995 doesn't do it either,and we inherit it's
+terminology.
+
+>   Imitator would relate to
+>   the case when the Join proxy is actually discovering the appropriate registrar
+>   for a connecting pledge?
+
+Q: Not sure what this means. Rephrase ?
+
+>   As in BRSKI-PRM the Registrar-agent is the initiator, it could be added as
+>   well.
+
+Added.
+
+>   This may be not relevant for the case in which a service technician
+>   is connected to the same LAN segment as the pledges to discover them, but
+>   if the Registrar-agent is co-located with the registrar it may be different.
+>   BRSKI-PRM does not assume the pledge discovery over a Join proxy.
+
+Right. The draft is currently silent over this "out-of-scope" option, and unless
+you want to change that, i'd also like to keep it that way, because it would be
+(i fear) a lot more theoretical text (PRM discovery of pledges via proxies).
+
+> - Relevant responder are considered as proxies and registrars is still fine
+>   from my understanding. I was thinking if the pledge as responder for BRSKI-PRM
+>   would make sense too. Again rather for the case of co-located Registrar-agent.
+>   But I was not sure if this makes sense based on the description of the
+>   responder selection in section 3.2.1. Here it relates rather to the responder
+>   as a kind of infrastructure service rather than the actual pledge to be
+>   bootstrapped.
+
+Added:
+
+Note that while pledges are discoverable in the context of this documents technologies, this section
+and its subsections do not apply to discovery of pledges because there is no redundancy involved,
+and selection of pledges is also only by their ID and not by their supported variation or context.
+
+> 
+> Section 3.2.1
+> - Just a thought: The last two paragraph regarding resilience may be put in a
+>   separate "operational consideration section". On the other hand this would
+>   rip the description and the considerations also in other sections apart.
+>   This is also valid for other section. Right now, I'm seeing a benefit in
+>   keeping the information together.
+
+The second to last paragraph IMHO tries to define sufficiently solid requirements
+that it is well placed here. The last paragraph is indeed more an explanation,
+but yes, to short to bother creaing a separate ops section for it.
+
+> 
+> Section 3.3.2.1.
+> - Heading: OLD "Direction Connections Mode", NEW "Direct Connections Mode"
+
+Fixed.
+
+> Section 3.3.2.2
+> - OLD "annuncements", NEW "announcements"
+> - The text regarding load balancing is partly repeated from section 3.2.3 and
+>   could be referenced.
+
+I just removed that paragraph. Just duplicate ..
+
+> Section 3.3.2.3
+> - JPY should be explained or referenced with the constraint join proxy draft
+
+Done.
+
+> - proposal to rename the mode name for consistency from
+>   OLD "Proxy in Name Only Mode on Registrars" to
+>   NEW "Proxy in Service Name Only Mode on Registrars"
+
+Done. Nice!
+
+> Section 3.4.3
+> - The statement "Manufacturer published LDevID identification schema" should
+>   refer to the IDevID instead of the LDevID, as the manufacturer does not have
+>   control over all of the LDevID content
+
+Done. Good catch.
+
+> - Proposal to change:
+>   OLD
+>    "BRSKI components perform cryptographic authentication of the IDevID ..."
+>   NEW
+>    "BRSKI components perform cryptographic authentication using the IDevID ..."
+
+chatgpt says:
+  The best and most standard English in technical contexts is:
+  "Perform cryptographic authentication of the credential."
+  Why?  "of" clearly indicates that the credential is the object being authenticated.
+  This phrasing is widely used in security and identity standards (e.g., FIDO, WebAuthn, etc.).
+  It’s precise and idiomatic in cryptographic contexts.
+
+> - The following part is not quite clear to me regarding the context it applies to:
+>    OLD
+>    "In this normal case, a BRSKI component only needs to be configured
+>    with a list of root CA certificates that the BRSKI component trusts
+>    to provide pledges with IDevIDs and configure a manufacturer-name for
+>    each."
+>    - The second part related to the IDevID provision should relate to the
+>      LDevID as the IDevID is taken as granted in BRSKI. The manufacturer
+>        name configuration would be relevant for the Registrar-agent and
+>        potentially DNS-SD. If that is the case we could change it to:
+>       NEW
+>      "In this normal case, a BRSKI component (i.e., Registrar-Agent,
+>        Registrar) needs to be configured with a list of root CA certificates
+>        that the BRSKI component trusts to provide pledges with IDevIDs and
+>        configure a manufacturer-name for each in the related discovery component
+>        (Registrar-agent, DNS-SD)."
+> - The statement "Typically, an owner will not know the IDevID of a pledge
+>   before being able to connect to it." somehow contradicts with the following
+>   description. Based on the supply chain integration, the owner should be able
+>   to have access to IDevID information or at least serial number information
+>   based on the delivery information or packaging.
+> - Maybe a side question, do we distinguish between owner and operator? If not,
+>   maybe we should stick to operator.
+
+Responding to these concerns, i somehow ended up rewriting that whole section
+with a hopefully much better step-by-step description of the process by example.
+
+> Section 3.5.2.2
+> - Based on the example in Figure 4 my conclusion is the the default for GRASP
+>   would always be "rrm" and therefore does not need to be stated explicitly
+>   Figure 4 states: "["AN_Proxy", 4, 1, "",  ".
+>   The explanation is provided later on in section 4.2.2 with the usage of the
+>   default mode, but it may be good to also state it here
+
+Right.
+
+I also expanded on the examples for GRASP so that there is now a Registrar
+announcement and a matching proxy announcement included.
+
+> Section 4.2.2
+> - in the table line
+>   |BRSKI, |         |jose     |ThisRFC  |Dflt*|JOSE-signed JSON, Default when prm is    |
+>   the reference should be provided to I-D.ietf-anima-brski-prm instead of
+>    I-D.ietf-anima-brski-ae in the note column
+> - in the table line
+>   |       |vformat  |jose     |ThisRFC  |Dflt |JOSE-signed JSON, Default when prm is    |
+>   the reference should be provided to I-D.ietf-anima-brski-prm instead of
+>    I-D.ietf-anima-brski-ae in the note column
+
+Done.
+
+> Section 4.2.3
+> - in table line
+>    |       |[I-D.ietf-anima-brski-prm]          |prm-jose |prm jose |            |
+> it is maybe worth to add a note that the combination of prm and est assumes
+>  the additional enrollment endpoints define in BRSKI-PRM to provide wrapped
+>  enrollment objects (see also comment above).
+
+No:
+|         |{{RFC9733}}                            | prm-jose        | prm jose est | {{RFC9733} also includes required extensions to EST |
+
+> Again, thanks for taking up that work. I will do a more in depth review in the near future.
+> >From the current state I think the document is very comprehensive regarding the technical
+> approach. It definitely needs some more thinking through the different use cases and examples
+> on my side.
+
+Sure. Hope this can be done during last call, as i am trying to get this to move ahead.
+Much better to have an RFC and needing to do a bis quickly due to more experience,
+than have it hang around in a WG without ever getting to the first RFC ;-)
+
+Thanks a lot
+    Toerless
+> 
+> 
+> Best regards
+> Steffen
+> 
+> --
+> Steffen Fries
+> Siemens AG
+> 
+> 
+
+-- 
+---
+tte@cs.fau.de
