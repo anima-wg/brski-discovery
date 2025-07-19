@@ -3,13 +3,14 @@ coding: utf-8
 
 title: 'BRSKI discovery and variations'
 abbrev: BRSKI-discovery
-docname: draft-ietf-anima-brski-discovery-06
+docname: draft-ietf-anima-brski-discovery-07
 stand_alone: true
 ipr: trust200902
 submissionType: IETF
 area: Operations and Management
 wg: ANIMA
 kw: Internet-Draft
+updates: draft-ietf-anima-brski-prm
 cat: std
 consensus: true
 pi:
@@ -106,10 +107,26 @@ informative:
 
 --- abstract
 
-This document specifies how BRSKI entities, such as registrars, proxies, pledges or others
-that are acting as responders, can be discovered and selected by BRSKI entities acting as initiators,
-especially in the face of variations in the protocols that can introduce non-interoperability
-when not equally supported by both responder and initiator.
+This document specifies how to make BRSKI communications autoconfiguring, extensible and resilient
+in the face of simultaneous use of different variations of the BRSKI protocol (BRSKI, BRSKI-AE,
+BRSKI-PRM, constrained BRSKI, stateless constrained BRSKI proxies). This document
+specifies a data model, IANA registry and BRSKI component procedures to achieve this.
+
+This document does not define any new discovery methods. Instead, its data model allows
+to signal all current (and future) variations of the BRSKI family of protocols consistently
+via different existing network discovery mechanisms: DNS-SD, CoAP discovery (CORE-LF) and GRASP.
+Additional/future discovery mechanisms can also be supported through the IANA registry.
+
+Automatic resiliency and load-sharing are enabled through the use of discovery mechanisms and the
+provisioning of multiple instances of BRSKI components such as registrars and Join Proxies. This document
+specifies the procedures to support load-sharing and (fast) failover under failure and recovery of
+redundant components.
+
+Future proof deployments of BRSKI requires Join Proxies that automatically support any current and future
+BRSKI variation. This document specifies the procedures how Join Proxies can support this through
+specific Join Proxy protocol behavior and the use of discovery mechanisms.
+
+The specification for discovery of pledges by their IDevID as introduced by BRSKI-PRM is refined in this document.
 
 --- middle
 
@@ -120,7 +137,8 @@ when not equally supported by both responder and initiator.
 This document relies on the terminology defined in {{BRSKI}}.  The following terms are described partly in addition.
 
 Context:
-: See Variation Context.
+: A set of Services for whom the same set of variations applies
+
 
 IP, IPv4, IPv6:
 : In this document, IP refers to (inclusively) IPv4 or IPv6. If a statement applies to only one of the two versions, then the terms IPv4 or IPv6 are used.
@@ -146,7 +164,7 @@ Responder socket:
   number on which it responds to requests of the protocol (typically UDP or TCP).
 
 Role:
-: In the context of this document, a type of entity in a variation of BRSKI that can act as a responder and whose supported variations can be discovered. BRSKI roles relevant in this document include Join Registrar, Join Proxy and Pledge. The IANA registry defined by this document allows to specify variations for any roles. See also Variation Context.
+: In this document, functionality of an entity in a variation of BRSKI that can act as a responder and whose supported variations can be discovered. BRSKI roles relevant in this document include Join Registrar, Join Proxy and pledge. The IANA registry defined by this document allows to specify variations for any roles. See also Context.
 
 Socket:
 : The combination of am  IP address, an IP protocol that utilizes a port number (such as TCP or UDP) and a port number of that protocol.
@@ -158,11 +176,8 @@ Type:
 : See Variation Type.
 
 Variation:
-: A combination one one variation choice each for every variation type applicable to the variation context of one discoverable BRSKI communications.
+: A combination one one variation choice each for every variation type applicable to the context of one discoverable BRSKI communications.
   For example, in the context of BRSKI, a variation is one choice for "mode", one choice for "enroll" and once choice for "vformat".
-
-Variation Context:
-: A set of Services for whom the same set of variations applies
 
 Variation Type:
 : The name for one aspect of a protocol for which two or more choices exist (or may exist in the future), and where the choice
@@ -222,40 +237,78 @@ SCEP:
 
 # Overview
 
+
 ## Challenges
 
-BRSKI is a protocol with several current variations of aspects of the protocol.
-These variations exist to best serve different use-cases, product development
-and solution deployment preferences. Additional/new use-case preferences may prefer
-even further variations. All these current and future variations introduce challenges
-with interoperability, that the mechanisms defined in this document intent to help sove. These challenges are as follows.
+BRKI was designed to support multi-vendor deployments ideally with zero additional
+provisioning in the network just to support BRSKI. In recent years, multiple
+variations of the BRSKI protocol where specified, sich as {{BRSKI-PRM}}, 
+{{BRSKI-AE}}, {{cBRSKI}} and {{cPROXY}}; within these documents that are multiple
+options that need to be supported by all BRSKI entities involved in a BRSKI
+enrollment, such as pledge, proxy and registrar.
+
+1. Assume for example a registrar from vendor A is deployed in an enterprise network
+   or manufacturing plant to support a variety of pledges from an ecosystem of vendors all
+   using the vendor A registrar, and a particular subset of BRSKI protocol variations.
+   Later, it becomes necessary to also deploy various pledges from a different ecosystem.
+   Vendor B provides a registrar for this ecosystem, but they do use some slight variation
+   of BRSKI. Now the proxies deployed through either the A or B ecosystem discover either
+   registrars A or B and randomnly pick one. And in case they pick the wrong registrar,
+   enrollment for the pledge will fail because the proxy variation of BRSKI is not compatible
+   with the variation(s) supported by the choosen registrar.
+
+   Now the proxy implementations coming either from A or B start to fix up the issue
+   by introducing some proprietary extension to only discover "their" type of registrar.
+   Now a pledge from the A ecosystem can only be enrolled behind an A proxy and a B pledge
+   only behind a B proxy. The network operator now falls into the next trap: It is not
+   possible anymore to have networks where both A and B pledges can be enrolled, because
+   it is physcially not possible or financially feasible to deploy both A and B proxies.
+   Or if they are deployed, pledges would only randomnly pick the right pledge.
+
+2. Some use-case community wants to introduce a new variation aspect, such as introducing
+   a new encoding method for the message exchanges or a different certificate enrollment
+   protocol. But now this aspect can be combined with any possible other aspect of BRSKI.
+   And without appropriate planning upfront this ends up in more chaos of ad-hoc definition
+   every time some ecosystem prefers one specific variation of options.
+
+3. As if variations where not difficult enough, networks may only support one specific
+   autodiscovery protocol, and specific variations did not bother to define how their
+   variation of BRSKI could be discovered by another discovery protocol mechanism.
+   So that variation then invents yet another one-off way to discover its variation
+   in this new type of discover method in this now more important type of networks.
+
+The following sub-sections attempt to more formally describe the different challenges
+in a technically more precise language.
 
 ### Signaling BRSKI variation for responder selection.
 
-When an initiator such as a Join Proxy or BRSKI pledge uses a mechanism such as
-{{DNS-SD}} to discover an instance of a role it intends to connect to, such
-as a registrar, it may discover more than one such instance.
+When an initiator uses a discovery mechanism such as {{DNS-SD}}
+to discover an instance of the service that it intends to connect to, it may discover more than one such instance.
 
-When an initiator uses a discovery mechanism such as {{DNS-SD}} to discover an instance of
-the BRSKI role that it intends to connect to, it may discover more than one such instance.
-FOr example, BRSKI pledges want to discover Join Proxies or registrars.
+For example, BRSKI pledges want to discover Join Proxies or registrars.
 In the presence of variations of the BRSKI mechanisms that impact interoperability, performance
 or security, not all discovered instances may support exactly what the initiator needs to achieve
-interoperability or they may not provide the best desired metric. To support choosing an
-interoperable/best responder, the service announcement mechanism needs to carry the necessary
+interoperability or they may not provide the best desired metric. To support choosing the best
+interoperable responder, the discovery mechanism needs to carry the necessary
 additional information beside the service name that indicates the service/role of the responder.
 
 ### Consistent support for variations across different discovery mechanisms.
 
 Different BRSKI deployments may prefer different discovery mechanisms, such as {{DNS-SD}}, {{GRASP}},
 {{CORE-LF}} or others. Any variation in discovery already defined for one discovery mechanism usually
-has to be re-specified individually for every other discovery mechanism. This make it often cumbersome
+has to be re-specified individually for every other discovery mechanism. This makes it often cumbersome
 to select the preferred discovery mechanism for a specific type of deployment, because such additional
 specification work can take a long time. Indepedent specification of variations for different
 discovery mechanisms can also easily lead to inconsistencies and hence the inability to equally
 support all variations across all discovery mechanisms.
 
 ### Variation agnostic support for Join Proxies
+
+Pledges or Agents often need to connect to a registrar that supports the variation of BRSKI
+supported by the pledge or Agent via a Join Proxy. The Join Proxy needs to discover registrars
+and the variations they support and then announce themselves to pledges or Agents accordingly
+so that when the pledge or Agent connects to the Proxy that it will connect it to the right
+registrar.
 
 This document defines variations so that Join Proxies can be implemented and operated agnostic 
 of variations: When a Join Proxy supports one variation for a particular IP version and transport
@@ -306,7 +359,6 @@ the conceptual overview of how this is achieved.
 
 In this document, a service is a specific functionality provided by a responder over
 a network socket using a particular transport/security/session stack (such as TCP, UDP, COAP, DTLS).
-BRSKI as specified in {{BRSKI}} specifies a service it calls 
 
 In this document, a role is functionality performed by a BRSKI entity either as an initiator or responder.
 {{BRSKI}} defines the roles of pledge, Join Proxy, registrar, MASA. {{BRSKI-PRM}}
@@ -319,9 +371,8 @@ then become Join Proxies. Future BRSKI documents may introduce additional roles 
 document should be extensible to also support such additional roles.
 
 In this document a service is functionality performed as a result of a network connection
-from an initator to a responder. It is commonly named after the role name of the responder,
-such as Join Proxy, registrar or MASA. This makes specifically sense in the context of
-discovery, because initiators need to discover responders to establish the network connection.
+from an initator to a responder. The service is commonly named after the role name of the responder,
+such as Join Proxy, registrar or MASA. 
 
 ### Service Names
 
@@ -369,7 +420,7 @@ exchange and encoding level.
 
 Today, BRSKI connections can exchange vouchers in one out of multiple different
 encoding formats. Independent of that option, the BRSKI connection may also use different
-commands (so called "Endpoints"). Todays these are based on whether {{BRSKI-PRM}} is used or not.
+commands (so called "Endpoints"). Today, these are based on whether {{BRSKI-PRM}} is used or not.
 Finally, and also independent of those two options, the BRSKI connection may use one out of multiple
 different enrollment protocol options.
 
@@ -432,24 +483,22 @@ Different list of variation strings are necessary when services have different v
 different variation type values, different deployed variations or different defaults
 for the same variation type values and hence different variation strings.
 
-"BRSKI" is the context covering {{BRSKI}} connections pledge to Join Proxy or registrar and Join Proxy to registrar
-connections using TCP.
+"tBRSKI" is the context covering {{BRSKI}} connections (which are using TCP, hence the "t") from pledge to Join Proxy or registrar and from Join Proxy to registrar connections.
 
-"cBRSKI" (constrained BRSKI) is the context covering {{cBRSKI}} 
-connections pledge to Join Proxy or registrar and Join Proxy to registrar connections using UDP.
+"cBRSKI" ("c"onstrained BRSKI) is the context covering {{cBRSKI}} 
+connections (using UDP) from pledge to Join Proxy or registrar and from Join Proxy to registrar connections.
 
 "BRSKI-PLEDGE" is the context covering pledges using {{BRSKI-PRM}} for connections
-from Registrar-Agents. It can equally cover in the future through variations the discovery of 
+from Registrar-Agents to pledges. It can equally cover in the future through variations the discovery of 
 {{BRSKI}} pledges for connections to them for other purposes - by introduction of
 appropriate variation types and values for such additional purposes.
 
 This document does not define variations for different end-to-end encryption mechanisms.
 However, the mechanisms described here can also be used to introduce backward incompatible new secure transport options.
 
-This document does also not introduce variation contexts for discovery of other BRSKI roles, such as discovery
-of pledges by Registrar-Agents (as defined in {{BRSKI-PRM}}), or discovery of MASA by registrars. However, the registries
-introduced by this document are defined such that those can be introduced later as well through additional
-registry entries and specification.
+Also, this document does not introduce contexts for discovery of other BRSKI roles beyond those mentioned,
+such as discovery discovery of MASA by registrars. However, the registries introduced by this document are defined such
+that those can be introduced later as well through additional registry entries and specifications.
 
 ### Registry Tables
 
@@ -458,7 +507,7 @@ required for BRSKI discovery in an extensible fashion. The following sections ex
 these registry tables. The registry tables themselves are listed in the IANA considerations
 section, see {{registry}}.
 
-#### Variation Contexts Registry Table
+#### Contexts Registry Table
 
 The IANA "BRSKI Variations Contexts" registry table, see {{fig-contexts}}, as defined by this document, 
 defines which Service Names and signaling parameters (e.g.: UDP vs. TCP) in each supported
@@ -482,7 +531,7 @@ This registry also registers the authoritative documentation defining the specif
 These specifications may differ for the same choice across different contexts, such as
 for "est" between BRSKI and cBRSKI.
 
-The "Context" column lists the BRSKI Variation Context(s) to which this line applies. If it is empty, then the same
+The "Context" column lists the BRSKI Context(s) to which this line applies. If it is empty, then the same
 Context(s) apply as that of the last prior line with a non-empty Context column.
 
 The "Variation Type" column lists the BRSKI Variation Type to which this line applies. If it is empty, then the
@@ -496,7 +545,7 @@ Variation Types and Variation Type Choices and MUST be strings from lowercase le
 The maximum length of a Variation Type Choice is 12 characters.
 
 The "Reference" column specifies the primary documents which defines the Variation Type Choice use in
-the rows context. Further references go into the Note(s) column.
+the row. Further references go into the Note(s) column.
 
 The "Dflt" Flag specifies a Variation Type Choice that is assumed to be the default Choice for the Context,
 such as "rrm" for the BRSKI context. Such a Variation Type Choice is assumed to be supported by
@@ -524,10 +573,10 @@ defines for every necessary context in the "Variation" column the variations whi
 as a space separated sequence of variation type values, and as a "-" concatenated variation string in the "Variation String" column.
 The space separated sequence does not take defaults into account, the variation string does. 
 
-Variation strings may include additional "one-off" variation strings in support of
-backward compatibility when the standard scheme does not work.
+Variations may be identified through other "irregular" strings, such as "",
+which are not created from concatenation of varation type values, whenever necessary for backward compatibility.
 
-The "Context" column lists the BRSKI Variation Context(s) to which a line applies. If it is empty, then the same
+The "Context" column lists the BRSKI Context(s) to which a line applies. If it is empty, then the same
 Context(s) apply as that of the last prior line with a non-empty Context column.
 
 The "Reference" column lists the document(s) that specify the variation, if that variation is
@@ -561,7 +610,7 @@ scope of this specification.
 The procedures specified in {{cPROXY}} would allow not only to
 run a transport stack of COAP over DTLS, but equally any other transport stack over UDP, such
 as QUIC - without any changes to the Join Proxy implementation or configuration when following
-the procedures described in this dcoument. All that is needed would be to introduce appropriate
+the procedures described in this document. All that is needed would be to introduce appropriate
 registration entries for the registry tables specified in this document (e.g.: add new Variation Type
 for transport and choices such as "coaps" or "quic" ).
 
@@ -580,12 +629,12 @@ services are desired and added to the registries created by this document. For e
 Registrars.
 
 Note that this specification does not mandate support for specific discovery methods in BRSKI
-implementations, because this is specific do the target deployment scenarios - hence the
+implementations, because this is specific to the target deployment scenarios - hence the
 option to support different discovery methods.
 
 Note that while pledges are discoverable in the context of this documents technologies, this section
 and its subsections do not apply to discovery of pledges because there is no redundancy involved,
-and selection of pledges is also only by their ID and not by their supported variation or context.
+and selection of pledges is also only by their ID and not by their supported variation.
 
 ### Responder Selection {#responder-selection}
 
@@ -640,7 +689,7 @@ unresponsive responders because service announcements may be stale. This happens
 service announcements only loosely track aliveness of a service process.
 
 In typical implementations, service announcement may be activated when the
-service process starts, and stopped, when it stops. Problems such as a hanging/unresponsible
+service process starts, and stopped, when it stops. Problems such as a hanging (unresponsive)
 service process will not be reflected in the service announcement setup. In addition,
 caching of service announcements, such as through the DNS TTL field are a further
 possible cause of assuming service aliveness that is not correct. Only actual
@@ -648,7 +697,7 @@ connection probing or other similar tracking can determine if a service responde
 to the level of accepting connections.
 
 Responders intended to be used in resilient deployments SHOULD therefore ensure
-that their service announcements are not active when the responder did or would
+that their service announcements are not active when the responder died or would
 have failed to successfully accept connection for 120 seconds or more. This can
 be implemented for example by connection probing once every 30 seconds and
 withdrawing the service announcements when this fails or by other forms
@@ -676,29 +725,13 @@ on connection attempts because they are unresponsive or unreachable. Instead, af
 responder first fails to connect, the Join Proxy SHOULD skip this responder in further
 connection attempts for other connecting pledges.
 
-Stateless proxies can not learn unresponsiveness or unreachability of a responder
-through connection attempts. Instead, they SHOULD perform a stateless responsivness/reachability
+Stateless proxies cannot learn unresponsiveness or unreachability of a responder
+through connection attempts. Instead, they SHOULD perform a stateless responsiveness/reachability
 check for each responder that the Join Proxy is actively forwarding packets to from
 one or more pledges.  If no packets are returned from such a responder over a period of more
 than 30 seconds, then the responder SHOULD be considered unreachable for at least
 180 seconds. Unreachability signaling received in response to packets sent to the
 responder SHOULD trigger this unreachability status after it persists for 10 seconds.
-
-Using newly discovered responders in stateless proxies must be done carefully.
-Consider the common case that service announcements for a primary responder
-did stop due to network issue, the Join Proxy starts to send packets to a secondary
-responder, and then the primary responder becomes reachable and the Join Proxy sees
-service announcements for it. If the Join Proxy would now start to forward packets
-from pledges to this primary responder due to its higher precedence, then this
-could unnecessarily break ongoing connections from clients whose packets
-are currently forwarded to the lower preference Join Proxy.
-
-Replacing to use a selected responder in a stateless Join Proxy with a better one
-SHOULD hence only be done if no packets have been exchanged between pleges
-and the current selected responder through the Join Proxy for more than 300 seconds.
-This long timeout specifically intends to not break connections in which the
-registrar keeps the pledge waiting for an administrative response such as
-an operator performing a policy validation for enrollment.
 
 Load balancing as described in {{responder-selection}} is NOT RECOMMENDED for
 stateless proxies because per-pledge stateless load balancing may involve more
@@ -710,7 +743,6 @@ Supporting weights with stateless proxying is even more complex. Instead of
 load balancing, responders simply need to be designed to scale to the maximum
 amount of simultaneous initiator connections necessary when supporting stateless
 proxying mode.
-
 
 ### Protection against malicious service announcements {#announcement-protection}
 
@@ -726,7 +758,7 @@ because with the selection rules required by this document, initiators still hav
 the highest chance of picking the non-malicious announcement.
 
 While being weak, this recommendation can still be better than nothing against such
-malicious announcement. These recommendations SHOULD be superceeded by better
+malicious announcement. These recommendations SHOULD be superseded by better
 recommendations for more narrowly scoped deployment scenarios.
 
 ## Join Proxies Support for Discovery and Variations
@@ -756,13 +788,13 @@ or change of configuration of proxies.
 Proxies may use different approaches to connect to registrars. The following
 subsections discuss the primary relevant options. 
 
-#### Direct Connections Mode {#direct-connection}
+#### Direct Connection Mode {#direct-connection}
 
 In one Join Proxy implementation option called "direct connections", the Join Proxy creates for every discovered registrar
 socket a separate Join Proxy responder socket. It announces this socket with the same set of parameters
-as it did learn from the registrars service announcement, except for the appropriate Join Proxy service name
+as it did learn from the registrar's service announcement, except for the appropriate Join Proxy service name
 and socket parameters (IP address, port number). When a pledge connects to that socket, the
-Join Proxy passes traffic for that pledges connection to and from the respective registrar socket. 
+Join Proxy passes traffic for that pledge's connection to and from the respective registrar socket. 
 
 When using the direct connections approach, the task of selecting the best registrar socket for
 a particular variation is left to pledges because they are exposed to at least the same number 
@@ -771,39 +803,24 @@ pledge has to select the best available one from them.
 
 To reduce the number of sockets that have to be announced by proxies when using direct connections
 and to also reduce the number of responder sockets that need to be maintained by a Join Proxy operating
-in this approach, these proxies SHOULD limit the number of registrar sockets it maps to between 4 and 10
+in this approach, these proxies SHOULD limit the number of registrar sockets they maps to between 4 and 10
 best registrar sockets as described in {{responder-selection}} per variation.
 
 #### Best Registrar Selection Mode {#best-registrar}
 
-In the implementation mode "best registrar selection", the Join Proxy creates a separate socket
+In the implementation mode "best registrar selection", the Join Proxy creates a separate responder socket
 for a set of all registrar sockets that it discovers and that announce support for the same set
-of variations. It then connects pledges to the best available registrar socket from that set.
+of variations.
 
-It then announces this socket with the parameters of the best discovered registrar socket, replacing
-the service name and network parameter names with those for its Join Proxy responder socket as in the
-case of a direct connection. 
+For pledges to discover the Join Proxy, the Join Proxy then announces this socket with the parameters of
+the best discovered registrar socket, replacing the service name and network parameter names with those
+for its Join Proxy responder socket as in the case of a direct connection. 
 
-When performing best registrar selection, the Join Proxy has to perform selection of the best availalable
-responder as described in {{responder-selection}}. 
+The Join Proxy then connects pledges to the best available registrar socket from that set when
+it receives a connection to that socket.
 
-In addition, stateful proxies implementing best registrar selection SHOULD
-optimize selection of registrar for each Join Proxy responder socket across
-connections for multiple pledges instead of starting the sequence of responders
-to try anew from the highest precedence registrar for every new connecting pledge - and repeatedly run
-into timeouts when one or more of the best registrar time out on connection attempts
-because they are unresponsive or unreachable. Instead, after a
-responder first fails to connect, the Join Proxy SHOULD skip this responder in further
-connection attempts for other connecting pledges and re-consider it only for new
-connection attempts after at least 60 seconds.
-
-Stateless proxies can not learn unresponsiveness or unreachability of a responder
-through connection attempts. Instead, they SHOULD perform a stateless responsivness/reachability
-check for each responder that the Join Proxy is actively forwarding packets to from
-one or more pledges.  If no packets are returned from such a responder over a period of more
-than 30 seconds, then the responder SHOULD be considered unreachable for at least
-180 seconds. Unreachability signaling received in response to packets sent to the
-responder SHOULD trigger this unreachability status after it persists for 10 seconds.
+When performing best registrar selection for that connection, the Join Proxy has to perform selection of the
+best availalable responder as described in {{responder-selection}}. 
 
 Using newly discovered responders in stateless proxies supporting best registrar selection must be done carefully.
 Consider the common case that service announcements for a primary responder
@@ -816,12 +833,22 @@ are currently forwarded to the lower preference Join Proxy. Direct connection mo
 not incur this problem, because the pledge can select another Join Proxy responder socket
 when it discovers the first one to be unresponsive or erroneous.
 
-Replacing to use a selected responder in a stateless Join Proxy with a better one
+Replacing a selected responder in a stateless Join Proxy with a better one
 SHOULD hence only be done if no packets have been exchanged between pleges
 and the current selected responder through the Join Proxy for more than 300 seconds.
 This long timeout specifically intends to not break connections in which the
 registrar keeps the pledge waiting for an administrative response such as
 an operator performing a policy validation for enrollment.
+
+In addition, stateful proxies implementing best registrar selection SHOULD
+optimize selection of registrar for each Join Proxy responder socket across
+connections for multiple pledges instead of starting the sequence of responders
+to try anew from the highest precedence registrar for every new connecting pledge - and repeatedly run
+into timeouts when one or more of the best registrar time out on connection attempts
+because they are unresponsive or unreachable. Instead, after a
+responder first fails to connect, the Join Proxy SHOULD skip this responder in further
+connection attempts for other connecting pledges and re-consider it only for new
+connection attempts after at least 60 seconds.
 
 #### Proxy in Service Name Only Mode on Registrars
 
@@ -838,12 +865,12 @@ share that implementation for connections from pledges by also implementing
 simple UDP<->JPY header conversion (see {{cPROXY}}).
 Nevertheless, they do need to do this via
 a separate socket and hence need to announce the two sockets separately:
-UDP for connections pledges with the Join Proxy service name, and UDP with JPY header for 
+UDP for connections from pledges with the Join Proxy service name, and UDP with JPY header for 
 connections from stateless proxies with the stateless registrar service name.
 
 Proxy functionality that is implemented as described here on registrars
 is called "proxy in service name only mode", because such an implementation
-can not discover, select and fail over between different registrars.
+cannot discover, select and fail over between different registrars.
 Such proxies in name only therefore do not share requirements
 against discovering and selecting registrars described for the prior specified
 modes.
@@ -907,7 +934,7 @@ pledges will require the use of a Join Proxy.
 Join Proxy implementations using the procedures described in this document can easily
 be reused for any other protocols beside BRSKI as long as they use TCP or UDP.
 For this, it would simply be required that the Join Proxy can be configured with
-pairs of service names other than those used by BRSKI/cBRSKI: A service name to
+pairs of service names other than those used by tBRSKI/cBRSKI: A service name to
 discover, and a service name to use for the Join Proxy responder socket service announcements.
 
 ### Scaling service discovery and selection
@@ -915,7 +942,7 @@ discover, and a service name to use for the Join Proxy responder socket service 
 Discovering and selecting an available service instance can become a design challenge
 in large networks with many redundant service announcements.
 
-Consider for example the common cade of allowing BRSKI registration in a network
+Consider for example the common case of allowing BRSKI registration in a network
 with many geographically spread out sites such as in enterprise,  industrial or
 building construction environments. During initial bringup of such sites, 
 Internet connectivity may be non-existing, or intermittant, and hence one or more
@@ -947,11 +974,8 @@ Pledges supporting {{BRSKI-PRM}} MUST support it. It may also be used by other v
 outside of the PRM use case, for example for inventorizing pledges.
 
 Pledges supporting BRSKI-PLEDGE MUST support DNS-SD for discovery via mDNS, using link-local scope.
-For DNS-SD discovery beyond link-local scope, pledges MAY support DNS-SD via {{DNSSD-SRP}}.
-
-DNS-SD WG Question TBD: Is there sufficient auto-configuration support in {{DNSSD-SRP}}, that pledges without any
-configuration can use it, and if so, do we need to raise specific additional requirements to enable this
-in pledges ?
+For DNS-SD discovery beyond link-local scope, pledges MAY support DNS-SD via {{DNSSD-SRP}}, using
+automatic discovery of the SRP server and registering the below defined DNS-SD data with it.
 
 These DNS-SD requirements are defaults. Specifications for specific deployment contexts such as specific
 type of radio mesh network solutions may need to specify their own requirements overriding or amending these
@@ -960,7 +984,7 @@ requirements.
 Pledges MUST support to be discoverable via their DNS-SD service instance name.
 
 Pledges SHOULD support to be discoverable via DNS-SD browsing, so that Registrar-Agents can find
-unexpected pledges or can easier enumerate expected pleges, especially in the presence of multiple
+unexpected pledges or can enumerate expected pleges more easily, especially in the presence of multiple
 different subnets and use of mDNS. A pledge can also only be found by browsing if it is not
 possible for the owner to aquire serial-number information of a pledge by the time BRSKI-PRM  needs it
 (to create a service instance name).
@@ -980,6 +1004,13 @@ If browsing is not desired by a pledge, the pledge does simply not respond to qu
 service name, or does not register its PTR RR for this service name when using unicast DNS-SD via
 {{DNSSD-SRP}}. This does not affect operations for the service instance name.
 
+This specification does not introduce the procedures to discover pledges via CORE-LF or GRASP
+because it is unclear if there is currently demand for this, and because it can easily be added
+via additional specs and adding entries to the registry.  For CORE-LF, browsing of entries
+can be supported via CORE-RD ({RFC9176}}), with appropriate auto-discovery of the CORE-RD server.
+For GRASP, this could be done via a method mapping DNS-SD into GRASP, such as {{I-D.eckert-anima-grasp-dnssd}},
+specifically to support browsing of pledge instance names.
+
 ### Service Instance Name
 
 The service instance name chosen by a BRSKI pledge MUST be composed from information which is
@@ -994,7 +1025,7 @@ name to discover a pledge from a Registrar-Agent, then this may potentially (but
 from two or more pledges having the same serial number, such as in the following cases:
 
 1. A manufacturer has different product lines and re-uses serial-numbers across them.
-2. Two different manufacturer re-use the same serial-number space.
+2. Two different manufacturers re-use the same serial-number space.
 
 If pledges enable browsing of their service instance name, they MAY support DNS-SD specified
 procedures to create unique service instance names when they discover such clashes, by appending
@@ -1139,7 +1170,7 @@ chains and different production sub-companies may use different sub-CA certifica
 chain. Or the serialNumber alone is not unique across the certificate chain,
 but further Subject fields of the certificate are required for a unique
 identification, such as the O)rganization field. It could contain for example
-one out of multiple brand names that use simple numerica serialNumber formats
+one out of multiple brand names that use simple numerical serialNumber formats
 and hence could collide.  None of such complexities are desirable for new designs,
 but they may be necessary to support BRSKI for existing products.
 
@@ -1225,10 +1256,10 @@ TXT RR reasonably short.
 To be able to specify for each responder socket individually its supported variations as well
 as its selection criteria (priority weight), it needs to be represented in DNS-SD as a
 service instance name with an SRV and TXT RR. In BRSKI-PLEDGE {{brski-pledge}} the service instance
-name is significant as it is what a Registrar-Agent may need to to discover, but in BRSKI and cBRSKI
+name is significant as it is what a Registrar-Agent may need to discover, but in tBRSKI and cBRSKI
 it is merely an artefact of DNS-SD encoding: Unlike typical user-centric DNS-SD use-cases, there are
 no users that need to make sense of the meaning of the service instance name, for example to know,
-which printer to to pick. Only operators may need to look at them for troubleshooting.
+which printer to pick. Only operators may need to look at them for troubleshooting.
 The choice of instance name (the first component of a service instance name) is hence arbitrary. The same
 is true for the host names used in the DNS-SD records for BRSKI.
 
@@ -1249,7 +1280,7 @@ exist to avoid the creation of unnecessarily inconsistent host names.
 
 If no DNS host name exists, the registrar MUST be able to automatically create a DNS host name
 and the A and/or AAAA RRs for the address(es) used by the registrar for use in the SRV RR target field.
-This requirement exists to ensure that operators are not unnecessary required to configure a host name
+This requirement exists to ensure that operators are not unnecessarily required to configure a host name
 on a system that does not need one - and none is required to run a registrar.
 
 A registrar MAY use any unique identifiers of its host system as its instance name or host name.
@@ -1259,15 +1290,15 @@ use an instance component such as "registrar" and there is already another regis
 known unique identifier allows a registrar to raise an alert and claim an operational error 
 with a high degree of confidence. 
 
-MAC addresses are only unique when an application such as a registrar understand what hardware it
+MAC addresses are only unique when an application such as a registrar understands what hardware it
 is running on, and that the MAC address was assigned by registering its OUI with IEEE and that
-MAC addresses from the OUI where assigned uniquely. This is for example not necessarily the
+MAC addresses from the OUI were assigned uniquely. This is for example not necessarily the
 case for IoT equipment or registrars running in a virtual context in the cloud. IP addresses
-can be assumed to be unique (enough) when they have globals scope or ULA. 
+can be assumed to be unique (enough) when they have global scope or ULA. 
 
 When registrar software does not know that no other registrar software or instance of the same
 software may run on the same host (for example when being packaged as an application), the
-registrar SHOULD not assume that a host unique name, is actually unique, but instead disambiguate
+registrar SHOULD not assume that a host unique name is actually unique, but instead disambiguate
 it by appending an additional name element to make it unique, such as a process number of the
 running process.
 
@@ -1276,10 +1307,9 @@ eliminating the need to also know the IP addresses associated with the name.
 
 Target host names need to follow the requirements for host names. By those requirements, it is not
 permitted to use ":" in target host names, for example as part of MAC or IP address based host names.
-instance names do not share this limitation, but it SHOULD be useful to pick the same host name requirements
-based encoding format for both type of DNS RR nams when using encoded addresses in them. For example
-by replacing ":" as commonly used with "-".
-
+Instance names do not share these syntactical limitation. For operational simplicity,
+instance names SHOULD be constructed in the same manner as target hostnames in an implementation.
+For example by replacing ":" with "-".
 
 If the responder needs to indicate different sockets for different (set of) variations, for example,
 when operating as a Join Proxy, according to {{proxy}}, then it needs to signal for each socket a
@@ -1294,7 +1324,7 @@ These example use OUI and IPv6 addresses reserved for documentation
 purposes. Do not re-use these addresses in actual deployments
 
 ~~~~
-# BRSKI
+# tBRSKI context
 _brski-registrar._tcp.local
                IN PTR  0000-5e00-5314._brski-registrar._tcp.local
 0000-5e00-5314._brski-registrar._tcp.local
@@ -1314,10 +1344,10 @@ _brski-registrar._udp.local
 0000-5e00-5314.local
                IN AAAA  2001:DB8:0815::5e00:5314
 ~~~~
-{: #dnssd-example-1 title='DNS-SD for single registrar supporting BRSKI/cBRSKI variations'}
+{: #dnssd-example-1 title='DNS-SD for single registrar supporting tBRSKI/cBRSKI variations'}
 
 In example {{dnssd-example-1}}, a registrar on a router, that is using mDNS for being discovered
-supports BRSKI with "rrm" and "prm" modes across the same TCP socket port 4555, with "est" and "cmp".
+supports tBRSKI with "rrm" and "prm" modes across the same TCP socket port 4555, with "est" and "cmp".
 This leads to the three supported and IANA registry defined variations "est-tls", "prm-jose", and "cmp".
 For cBRSKI (UDP), it supports the only variation registered through this document, "rrm-cose".
 
@@ -1335,11 +1365,11 @@ Running on a router without modular software, the registrar knows that no other 
 instances can run on the same host and hence the name has no further disambiguating elements.
 
 Note also that there is never a need for two different service instance names between
-BRSKI and cBRSKI, because they are distinguished bt the "_tcp" versus "_udp" component of the service
+tBRSKI and cBRSKI, because they are distinguished bt the "_tcp" versus "_udp" component of the service
 instance name.
 
 ~~~~
-# BRSKI registrar application
+# tBRSKI registrar application
 _brski-registrar._tcp.example.org
      IN PTR  noc-registrar-brski-37253._brski-registrar._tcp.example.org
 noc-registrar-brski-37253._brski-registrar._tcp.example.org
@@ -1355,7 +1385,7 @@ noc-registrar-cbrski-5376._brski-registrar._udp.example.org
 noc-registrar-cbrski-5376._brski-registrar._udp.example.org
      IN TXT "rrm-cose"
 
-# BRSKI-PRM application
+# tBRSKI, PRM variation application
 _brski-registrar._tcp.example.org
                IN PTR noc-registrar-prm-9735._brski-registrar._tcp.example.org
 noc-registrar-prm-9735._brski-registrar._tcp.example.org
@@ -1367,7 +1397,7 @@ noc-registrar-prm-9735._brski-registrar._tcp.example.org
 noc-registrar.example.org
                IN AAAA  2001:DB8:0815::5e00:5333
 ~~~~
-{: #dnssd-example-2 title='DNS-SD for a BRSKI registrar applications'}
+{: #dnssd-example-2 title='DNS-SD for a tBRSKI/cBRSKI registrar applications'}
 
 In the second example {{dnssd-example-2}}, a server system in the NOC of customer with
 domain example.org is set up as the registrar for various BRSKI options. It uses {{DNSSD-SRP}}
@@ -1375,16 +1405,16 @@ to register its DNS-SD names into the example.org domain which it discovers as t
 The host name of the server is set to noc-registrar.example.org.
 
 The operator installs three separate registrar applications on this server.
-One from a vendor whose pledges use BRSKI, one from an integrator supporting pledges
-from various "IoT" vendors that usecBRSKI, and one from a manufacturer that has
+One from a vendor whose pledges use tBRSKI, one from an integrator supporting pledges
+from various "IoT" vendors that use cBRSKI, and one from a manufacturer that has
 pledges using BRSKI-PRM.
 
 Each of the three applications operates the same way for discovery. It opens a socket for
 its registrar responder and notes the port number it receives. It determines that
-SRP is useable, that the default domain is "example.org", and that the host name
-is noc-registrar. It then forms a unique name from noc-registrar by appening
+SRP is usable, that the default domain is "example.org", and that the host name
+is noc-registrar. It then forms a unique name from noc-registrar by appending
 some string  abbreviation indicating its mode of operation ("brski", "cbrski", "prm"),
-and it's numeric process identifier - just in case more than one instance of the
+and its numeric process identifier - just in case more than one instance of the
 same application can be started. It then publishes its PTR, SRV and TXT DNS-RR,
 using these creates unique service instance names, the respective port number in the
 SRV RR and the variation(s) in the TXT RR.
@@ -1515,7 +1545,7 @@ could announce itself for only "prm" and might be preferred by the Join Proxy.
 ~~~~
 {: #grasp-example-3 title='GRASP example for a BRSKI Registrar supporting RRM and PRM via separate processes'}
 
-In {{grasp-example-3}}, A separate application process supports "prm" and hence
+In {{grasp-example-3}}, a separate application process supports "prm" and hence
 uses a separate socket with port number 44000 from "rrm", with port 4443.
 Assuming there is no shared GRASP implementation across the two separate process,
 such as a separate GRASP process, the announcements from both processes can
@@ -1526,7 +1556,7 @@ same sender in GRASP not only within a single packet, but also when they arrive
 via separate packes. To support implementation cases just as this one.
 
 For a more extensive, DNS-SD compatible encoding of the objective-value that also
-support Service Instance Names, see {{I-D.eckert-anima-grasp-dnssd}}.
+supports Service Instance Names, see {{I-D.eckert-anima-grasp-dnssd}}.
 
 ### CORE-LF
 
@@ -1537,7 +1567,7 @@ HTTP headers, to link an HTTP document against other URIs. Web linking is not a 
 method for discovery of services for use with HTTP.
 
 Based on Web Linking, "Constrained RESTful Environments (CoRE) Link Format", {{CORE-LF}} introduces a
-stand alone method to discover resources, such as service instances.
+standalone method to discover resources, such as service instances.
 CORE-LF was introduced primarily for use with {{COAP}} but it can equally be used for discovery of
 service instances that use HTTP or any other suitable (web transfer) protocols.
 This makes CORE-LF an alternative to DNS-SD and GRASP for any of the BRSKI variations.
@@ -1554,7 +1584,7 @@ mechanism (such as DNS-SD) and then use a unicast UDP or TCP COAP connection to 
 to discover CORE-LF resources available on other systems. Resource providers can likewise register
 their resources with the resource directory server using CORE-RD registration procedures.
 
-In summaery, CORE-LF including CORE-RD is a mechanism for registration and discovery of resources and
+In summary, CORE-LF including CORE-RD is a mechanism for registration and discovery of resources and
 hence services which may be preferred in deployments over other options and can equally be applicable
 to register/discover any variation of BRSKI for any type of BRSKI service.
 
@@ -1601,7 +1631,7 @@ The following picture, {{corelf-example-2}} shows the encoding and an example of
 {{cPROXY}} introduces the new scheme "coaps+jpy" for the packet
 header used by the stateless JPY" protocol. The request in the template is assumed to be
 based on unicast, relying on another method to discover the IP address of the registrar first.
-It could equally use COAP site-scoped IP multicast, but in general, the assumeption is that
+It could equally use COAP site-scoped IP multicast, but in general, the assumption is that
 registrar will not necessarily be link-local connected to proxies (this may be different in
 specific deployments). Even though the registrar IP address is hence known, the reply still
 needs to include this address again because in the {{CORE-LF}} link format, and {{RFC3986}}, Section 3.2, the
@@ -1627,10 +1657,9 @@ RES: 2.05 Content
 #### Specification {#corelf-spec}
 
 This section specifies the use of CORE-LF for BRSKI variations.
-These specifications are backward compatible extensions to what was is specified in {{cBRSKI}}
+These specifications are backward compatible extensions to what is specified in {{cBRSKI}}
 and {{cPROXY}}, except for noted exceptions, where the requirements
-are narrowed. This document does not specifiy how to discover
-It uses terms from the ABNF in section 2 of {{CORE-LF}} and from {{RFC3986}} (URI) for explanations
+are narrowed. The following uses terms from the ABNF in section 2 of {{CORE-LF}} and from {{RFC3986}} (URI) for explanations
 and relies on the following template example, {{corelf-template}}.
 
 ~~~~
@@ -1661,7 +1690,7 @@ and {{cPROXY}} to make extensibility easier.
 BRSKI responder sockets MUST include a resource type field indicating a resource type
 value indicating a BRSKI service, indicated as "brski-service" in {{corelf-template}}.
 This MUST be registered in the IANA "Resource Type Link Target Attribute Values" registry table,
-and also referenced in the "BRSKI Variation Contexts" registry table {{fig-contexts}}. 
+and also referenced in the "BRSKI Contexts" registry table {{fig-contexts}}. 
 A brski-service is a string without "." (single component string).
 
 Discovery of registrar sockets  by stateful proxies uses the resource type "brski.rs".
@@ -1813,7 +1842,7 @@ The names of BRSKI services
 MUST not duplicate the endpoint names of any resources specified
 for BRSKI protocols. This means that "rv" or "vs" can not be
 used to create BRSKI service name resource types "brski.rv" or
-"brski.rs", and likewise, Additional BRSKI endpoints can not
+"brski.rs", and likewise, additional BRSKI endpoints can not
 be called "rs", "jp", "jpy" or any other string registered in the
 BRSKI discover registry tables.
 
@@ -1828,7 +1857,7 @@ IANA is asked to reserve all resource type values starting with "brski."
 in the "Resource Type (rt=) Link Target Attribute Values" table. Resources
 with this prefix are meant to be required for discovery
 of BRSKI services and resources (see {{brski-resources}}) and hence SHOULD
-be listed in the BRSKI Variation Contexts registry table for use with CORE-LF,
+be listed in the BRSKI Contexts registry table for use with CORE-LF,
 if they indicate a service, or be specified in a BRSKI specification if
 they are resources but not services.
 
@@ -1839,11 +1868,11 @@ they are resources but not services.
 | pw | DNS SRV compatible priority and weight of resource target | IETF | \[ThisRFC] |
 {: #fig-attrs title="Target Variation and Priority/Weight Attributes"}
 
-IANA is asked to add an entries for "var" and "pw" according to above {{fig-attrs}} to
+IANA is asked to add entries for "var" and "pw" according to above {{fig-attrs}} to
 the "Target Attributes" table.
 
 The "var" target attribute is meant to be used for BRSKI targets as specified in
-this document. It is also meant to be useable for other targets if so desired - to
+this document. It is also meant to be usable for other targets if so desired - to
 indicate variations of the resource type of the target. For targets with a non-BRSKI
 resource target (not using "rt=brski.*"), the format of the value may be different
 than specified for BRSKI.
@@ -1887,7 +1916,7 @@ Spec / Applicability:
 : A "-" indicates that the variation is considered to be feasible through existing specifications, but not explicitly mentioned in them.
   An "NA" indicates that the combination is assumed to be not working with the currently available specifications.
 
-### BRSKI Variation Context Registry Table
+### BRSKI Context Registry Table
 
 \[RFC-Editor / IANA: The following IANA tables should also have hotlinks for the referenced RFC/drafts. Unfortunately, several of the referenced documents are already referenced in this document with protocol names such as cBRSKI instead of draft-if/RFC-number, which is to make it easier to read the draft. However, this is not appropriate for pictures or IANA tables. But as you can see from explanations in Changelog for rev 06, i can not figure out how to have both type of references. Hence i have removed the references from draft/RFC in this section. Please re-establish them in the RFC if possible.]
 
@@ -1901,7 +1930,7 @@ Spec / Applicability:
 |                 |                            | DNS-SD    | "brski-proxy"<br> /<br> "brski-registrar" /<br> "brski-registrar-rpy" with UDP           | THIS-RFC |
 |                 |                            | GRASP     | "AN_join_registrar" /<br> "AN_join_registrar_rjp" /<br> "AN_Proxy"<br> with IPPROTO_UDP  | \[THIS-RFC] |
 | BRSKI-PLEDGE    | mode<br>vformat<br>enroll  | DNS-SD    | "brski-pledge" with TCP                                                                  | \[THIS-RFC] |
-{: #fig-contexts title="BRSKI Variation Contexts"}
+{: #fig-contexts title="BRSKI Contexts"}
 
 ### BRSKI Variation Type and Choices Registry Table
 
@@ -1971,7 +2000,7 @@ of the pledge via DNS-SD increases the ability of attackers to discover pledges 
 DoS attacks can be attempted.
 
 Especially when supporting DNS-SD browsing across unicast DNS,
-Pledges MUST implement DoS prevention measures, such as limiting the number and rate of accepted TCP
+pledges MUST implement DoS prevention measures, such as limiting the number and rate of accepted TCP
 connections on a per-initiator basis. If feasible for the implementation, simultaneous connections
 SHOULD be possible, so that an ongoing attacker connection will not delay a valid Registrar-Agent
 connection. When accepting connections, a strategy such as LRU MAY be used to ensure that an attacker
@@ -1999,23 +2028,58 @@ information even if the pledge itself is not requesting them or is requesting ot
 DNS-SD RRs. Definition of these procedures is outside the scope of this specification
 though.
 
+None of the discovery mechanisms (DNS-SD, GRASP or CORE-LF) are necessarily secure. Instead,
+it is a matter of their deployment, how trustworthy service announcements are. In an
+unprotected deployment with DNS-SD via mDNS for example, an attacker could attract
+connections from responders by announcing itself with the best priority value. When a
+deployment instead uses a secure domain deployment model, such as an {{ACP}},
+a secured wireless mesh technology, or discovery via a secured DNS server, then
+service announcements are typically assumed to be trustworthy and with them their
+service parameters. In those deployments, the security question is then primarily the
+attack vectors to impair such a responder to make it behave in undesirable means.
+
 # Acknowledgments
 
-TBD.
-
-# Draft considerations
-
-## Open Issues
-
-Questions to the DNS-SD community.
-
-TBD
+Many thanks for reviews by Arthur Hecker, Steffen Fries and discussions/feedbacks by Brian Carpenter, Michael Richardson, Michael Kovatsch. 
 
 ## Change log
 
 \[RFC Editor: please remove this section.]
 
+WG draft 07:
+
+Defined document to be update to draft-ietf-anima-brski-prm (for the specifiation of IDevID derived DNS-SD discovery of pledges)
+
+Resolved open Q text wether SRP allows discovery of SRP server. According to Stuart Cheshire this is supported.
+
+Incorporated initial Feedback from Michael Kovatsch
+
+Added section explaining that there is no spec for how to do pledge discovery via CORE-LF or GRASP.
+
+- Rewrote 2.1 Challenges to now be a more comprehensive set of 3 example deployment issues without this work.
+
+Incorporated review by Artur Hecker
+
+- Rewrote abstract to more comprehensively (and easier understandable) describe the scope of this document
+
+- Simplified terminology: removed "variation context", not only calling it "context".
+
+- changed name of BRSKI context in IANA registry to 'tBRSKI' (TCP BRSKI) - to make it easier to know when text refers to BRSKI
+  as an overall cncept or specifically to the TCP based set of variations of BRSKI.
+
+- Removed duplicate text paragraphs in proxy sections.
+
+- Added note about (in)security of discovery mechanisms in general and how deployments typically defer to the "secure domain" context to overcome this issue.
+
+- Large number of textual fixes (thanks a lot for the thorough read!).
+
+
 WG draft 06:
+
+Initial overview review feedback from Michael Kovatch and Artur Hecker
+
+Made abstract and Challenges introduction hopefully better explaining the scope of
+the document and motivate it's need.
 
 Review Steffen Fries:
 
