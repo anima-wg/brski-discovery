@@ -9,10 +9,9 @@ In-Reply-To: <b0969afe78934b13a4237f12e7b1d802@huawei.com>
 Thanks a lot, Artur for the thorough review and many thought provoking
 high-level considerations from your review.
 
-I will be uploading the new -07 version with the fixes against your review
-when Datatracker opens. For the time being, here is the diff against -05:
+Here is diff -05 vs. -05:
 
-https://author-tools.ietf.org/diff?url_1=https://raw.githubusercontent.com/anima-wg/brski-discovery/f7545be924ec15cb72556f3663e3ca44b287db83/draft-ietf-anima-brski-discovery.md&url_2=https://raw.githubusercontent.com/anima-wg/brski-discovery/fcc4f7e66413b847371853a7acc4a273684c4189/draft-ietf-anima-brski-discovery.md
+https://author-tools.ietf.org/diff?doc_1=draft-ietf-anima-brski-discovery-05&doc_2=draft-ietf-anima-brski-discovery-07
 
 This contains both the fixes for you and Matt Kovatsch as well as those for
 Steffen Fries (-06).
