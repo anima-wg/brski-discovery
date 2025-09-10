@@ -3,14 +3,14 @@ coding: utf-8
 
 title: 'BRSKI discovery and variations'
 abbrev: BRSKI-discovery
-docname: draft-ietf-anima-brski-discovery-07
+docname: draft-ietf-anima-brski-discovery-08
 stand_alone: true
 ipr: trust200902
 submissionType: IETF
 area: Operations and Management
 wg: ANIMA
 kw: Internet-Draft
-updates: draft-ietf-anima-brski-prm
+updates: draft-ietf-anima-brski-prm, rfc6690
 cat: std
 consensus: true
 pi:
@@ -1846,20 +1846,42 @@ used to create BRSKI service name resource types "brski.rv" or
 be called "rs", "jp", "jpy" or any other string registered in the
 BRSKI discover registry tables.
 
+# Updates
+
+## Update to draft-ietf-anima-brski-prm
+
+[ TBD - unclear if we need this update indication. Need to revisit spec to check consistency ].
+
+## Update to RFC6690
+
+This document updates (extends) {{CORE-LF}} section 7.4 through the IANA considerations of {{rtreg}}
+by requesting additions for BRSKI to the IANA CoRE "Resource Type (rt=) Link Target Attribute Values"
+range table.
 
 # IANA considerations {#IANA}
 
 ## Core Parameters
 
-### Resource Type Link Target Attribute Values
+### Resource Type Link Target Attribute Values {#rtreg}
 
-IANA is asked to reserve all resource type values starting with "brski."
-in the "Resource Type (rt=) Link Target Attribute Values" table. Resources
-with this prefix are meant to be required for discovery
-of BRSKI services and resources (see {{brski-resources}}) and hence SHOULD
-be listed in the BRSKI Contexts registry table for use with CORE-LF,
-if they indicate a service, or be specified in a BRSKI specification if
-they are resources but not services.
+IANA is asked to add the registration procedures as shown in {{fig-rtproc}}
+to the "Resource Type (rt=) Link Target Attribute Values" range table.
+
+
+| Range | Registration Procedures | Note |
+| value starts with "brski" | Specification Required | Review procedure described in [ThisRFC {{rtreg}}] |
+| value starts with "brski.p." | First Come First Served | See [ThisRFC {{rtreg}}] |
+{: #fig-rtproc title="New BRSKI Resource Type (rt=) Link Target Attribute Values"}
+
+Resources with the "brski" prefix SHOULD support BRSKI discovery as specified in this
+document. The specification of such a Resource SHOULD NOT prohibit or conflict
+with the combination of the signaling mechanisms to indicate variations of the resource
+as specified in this document. The specification SHOULD specify how to include the
+new  resource and its possible variations into the registry specified in {{registry}}.
+
+Resources starting with "brski.p." (where "p" is short for "private") are exempt
+from Specification requirements or requirements to support BRSKI discovery. However,
+they SHOULD still relate to the BRSKI technology.
 
 ### Target Attributes
 
@@ -2045,6 +2067,10 @@ Many thanks for reviews by Arthur Hecker, Steffen Fries and discussions/feedback
 ## Change log
 
 \[RFC Editor: please remove this section.]
+
+WG draft 08:
+
+Made document update to rfc6690 to allow formalizing request to update CORE RT= parameter range table with BRSKI entries, see section 4.1.1.
 
 WG draft 07:
 
