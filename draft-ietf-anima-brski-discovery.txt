@@ -2698,19 +2698,19 @@ Internet-Draft               BRSKI-discovery              September 2025
    to the "Resource Type (rt=) Link Target Attribute Values" range
    table.
 
-     +=================+===============+============================+
-     | Range           | Registration  | Note                       |
-     |                 | Procedures    |                            |
-     +=================+===============+============================+
-     | value starts    | Specification | Review procedure described |
-     | with "brski"    | Required      | in [ThisRFC Section 5.1.1] |
-     +-----------------+---------------+----------------------------+
-     | value starts    | First Come    | See [ThisRFC               |
-     | with "brski.p." | First Served  | Section 5.1.1]             |
-     +-----------------+---------------+----------------------------+
+      +=================+===============+===========================+
+      | Range           | Registration  | Note                      |
+      |                 | Procedures    |                           |
+      +=================+===============+===========================+
+      | value starts    | Specification | Requirements described in |
+      | with "brski"    | Required      | [ThisRFC Section 5.1.1]   |
+      +-----------------+---------------+---------------------------+
+      | value starts    | First Come    | See [ThisRFC              |
+      | with "brski.p." | First Served  | Section 5.1.1]            |
+      +-----------------+---------------+---------------------------+
 
-       Table 1: New BRSKI Resource Type (rt=) Link Target Attribute
-                                  Values
+             Table 1: New BRSKI Resource Type (rt=) Link Target
+                              Attribute Values
 
    Resources with the "brski" prefix SHOULD support BRSKI discovery as
    specified in this document.  The specification of such a Resource

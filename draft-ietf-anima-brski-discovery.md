@@ -1869,7 +1869,7 @@ to the "Resource Type (rt=) Link Target Attribute Values" range table.
 
 
 | Range | Registration Procedures | Note |
-| value starts with "brski" | Specification Required | Review procedure described in [ThisRFC {{rtreg}}] |
+| value starts with "brski" | Specification Required | Requirements described in [ThisRFC {{rtreg}}] |
 | value starts with "brski.p." | First Come First Served | See [ThisRFC {{rtreg}}] |
 {: #fig-rtproc title="New BRSKI Resource Type (rt=) Link Target Attribute Values"}
 
